@@ -8,7 +8,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:LuaToolsGui.ViewModels"
     xmlns:views="clr-namespace:LuaToolsGui.Views"
-    Title="LuaTools"
+    Title="MedMarketTools"
     Icon="icon.ico"
     Width="1080"
     Height="720"
@@ -16,18 +16,33 @@
     MinHeight="560"
     d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
+    WindowBackdropType="None"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
+    <ui:FluentWindow.Background>
+        <RadialGradientBrush Center="0.12,0.0" GradientOrigin="0.12,0.0" RadiusX="0.9" RadiusY="1.0">
+            <GradientStop Offset="0.0" Color="#2E0A12" />
+            <GradientStop Offset="0.45" Color="#12080B" />
+            <GradientStop Offset="1.0" Color="#08080A" />
+        </RadialGradientBrush>
+    </ui:FluentWindow.Background>
+
     <Grid>
+        <Grid.Background>
+            <RadialGradientBrush Center="0.12,0.0" GradientOrigin="0.12,0.0" RadiusX="0.9" RadiusY="1.0">
+                <GradientStop Offset="0.0" Color="#2E0A12" />
+                <GradientStop Offset="0.45" Color="#12080B" />
+                <GradientStop Offset="1.0" Color="#08080A" />
+            </RadialGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="LuaTools">
+        <ui:TitleBar Grid.Row="0" Title="MedMarketTools">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/icon.ico" />
             </ui:TitleBar.Icon>
@@ -52,6 +67,7 @@
             <!-- Fluent nav rail. Selection/highlight + page hosting are handled by the control. -->
             <ui:NavigationView
                 x:Name="RootNavigation"
+                Background="Transparent"
                 IsBackButtonVisible="Collapsed"
                 IsPaneToggleVisible="False"
                 OpenPaneLength="190"
@@ -112,43 +128,9 @@
                     </ui:NavigationViewItem>
                 </ui:NavigationView.FooterMenuItems>
 
-                <!-- Guest sign-in CTA + always-visible version tag at the very bottom of the pane -->
+                <!-- Always-visible version tag at the very bottom of the pane -->
                 <ui:NavigationView.PaneFooter>
                   <StackPanel>
-                    <StackPanel
-                        Margin="10,4,10,8"
-                        Visibility="{Binding IsGuest, Converter={StaticResource BoolToVis}}">
-                        <ui:Button
-                            HorizontalAlignment="Stretch"
-                            Appearance="Primary"
-                            Command="{Binding SignInCommand}"
-                            Content="{x:Static res:Strings.Nav_SignInDiscord}"
-                            Icon="{ui:SymbolIcon Person24}"
-                            Visibility="{Binding IsSigningIn, Converter={StaticResource InverseBoolToVis}}" />
-                        <StackPanel
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal"
-                            Visibility="{Binding IsSigningIn, Converter={StaticResource BoolToVis}}">
-                            <ui:ProgressRing
-                                Width="16"
-                                Height="16"
-                                IsIndeterminate="True" />
-                            <TextBlock
-                                Margin="8,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="11.5"
-                                Foreground="#9ca3af"
-                                Text="{x:Static res:Strings.Nav_WaitingForBrowser}" />
-                        </StackPanel>
-                        <TextBlock
-                            Margin="2,8,0,0"
-                            FontSize="11.5"
-                            Foreground="#f87171"
-                            Text="{Binding SignInError}"
-                            TextWrapping="Wrap"
-                            Visibility="{Binding SignInError, Converter={StaticResource NullToCollapsed}}" />
-                    </StackPanel>
-
                     <!-- Bottom line: "Signed in as …" when logged in, else the version tag. -->
                     <TextBlock
                         Margin="12,0,10,8"

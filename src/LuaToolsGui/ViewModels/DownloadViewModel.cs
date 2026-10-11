@@ -98,6 +98,9 @@ public partial class DownloadViewModel : ObservableObject
     /// <summary>Set by App so a guest hitting "Download" can be sent through the Discord sign-in flow.</summary>
     public Func<Task>? RequestSignIn { get; set; }
 
+    /// <summary>Set by App: sends users to Settings to set up access (join Discord + paste Hubcap key).</summary>
+    public Action? RequestAccessSetup { get; set; }
+
     /// <summary>Set by App: navigate to Manage and open this appid's detail (the install banner's "Reveal").</summary>
     public Action<long>? NavigateToGame { get; set; }
 
@@ -651,6 +654,20 @@ public partial class DownloadViewModel : ObservableObject
 
     // ── Downloads ───────────────────────────────────────────────────
 
+    /// <summary>True when a valid-format Hubcap key is configured. Keys can only be saved from Settings
+    /// after being verified against Hubcap, so presence + format is a safe, offline-friendly gate.</summary>
+    private bool HasHubcapAccess() =>
+        HubcapService.IsValidKeyFormat(_settings.HubcapApiKey);
+
+    /// <summary>No usable Hubcap key → explain why and route the user to Settings to set up access.</summary>
+    private Task PromptAccessSetupAsync()
+    {
+        Error = Resources.Strings.Add_NeedsHubcapKey;
+        _toast.Show(Resources.Strings.Add_NeedsHubcapKey, Resources.Strings.Add_NeedsHubcapKey_Tip);
+        RequestAccessSetup?.Invoke();
+        return Task.CompletedTask;
+    }
+
     /// <summary>
     /// Base-game manifest zip. Builds a job and hands it to the shared queue; the download, the
     /// overwrite confirmation and the install all happen there.
@@ -664,6 +681,13 @@ public partial class DownloadViewModel : ObservableObject
     public async Task<DownloadItem?> DownloadFromSourceAsync(SourceRowViewModel source)
     {
         if (Details is null) return null;
+
+        // All downloads require access (a valid Hubcap key, handed out in our Discord).
+        if (!HasHubcapAccess())
+        {
+            await PromptAccessSetupAsync();
+            return null;
+        }
 
         // Hubcap downloads use the user's OWN key and never touch lua.tools, so a guest with a key
         // configured can download without signing in. Every other source still needs a lua.tools account.
@@ -698,6 +722,11 @@ public partial class DownloadViewModel : ObservableObject
     private async Task GenerateDlcAsync()
     {
         if (Details?.BaseAppId is null) return;
+        if (!HasHubcapAccess())
+        {
+            await PromptAccessSetupAsync();
+            return;
+        }
         if (await PromptSignInIfGuestAsync(Resources.Strings.Add_SignIn_Download)) return;
 
         Error = null;

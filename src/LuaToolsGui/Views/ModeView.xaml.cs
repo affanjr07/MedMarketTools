@@ -9,6 +9,7 @@ public partial class ModeView : UserControl
     {
         InitializeComponent();
         DataContext = viewModel;
+        LuaToolsGui.Animations.Entrance.Enable(this);
         Loaded += async (_, _) => await viewModel.LoadAsync();
     }
 }

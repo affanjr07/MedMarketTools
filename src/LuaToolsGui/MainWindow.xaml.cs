@@ -17,6 +17,15 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         InitializeComponent();
         DataContext = viewModel;
 
+        // Force the neon-red / black override dictionary to win inside this window's subtree. WPF-UI
+        // writes the OS accent as DIRECT application resources, which shadow the merged dictionary in
+        // App.xaml; window-level resources are looked up before application resources, so merging here
+        // guarantees the red brushes (and backgrounds) actually apply.
+        Resources.MergedDictionaries.Add(new ResourceDictionary
+        {
+            Source = new Uri("pack://application:,,,/Themes/NeonRed.xaml", UriKind.Absolute),
+        });
+
         // NavigationView resolves page instances (DownloadView/SettingsView) from DI.
         RootNavigation.SetServiceProvider(services);
 
@@ -34,7 +43,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     // ── System tray ─────────────────────────────────────────────────
     private void InitializeTrayIcon()
     {
-        _trayIcon = new System.Windows.Forms.NotifyIcon { Text = "LuaTools", Visible = false };
+        _trayIcon = new System.Windows.Forms.NotifyIcon { Text = "MedMarketTools", Visible = false };
         try
         {
             using var stream = Application.GetResourceStream(new Uri("pack://application:,,,/icon.ico"))?.Stream;
@@ -110,7 +119,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         _trayIcon.Visible = true;
         _trayIcon.ShowBalloonTip(
             5000,
-            "LuaTools",
+            "MedMarketTools",
             message,
             error ? System.Windows.Forms.ToolTipIcon.Error : System.Windows.Forms.ToolTipIcon.Info);
     }

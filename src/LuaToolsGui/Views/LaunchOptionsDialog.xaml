@@ -13,7 +13,7 @@
     d:DataContext="{d:DesignInstance Type=vm:LaunchOptionsViewModel}"
     ExtendsContentIntoTitleBar="True"
     ResizeMode="CanResize"
-    WindowBackdropType="Mica"
+    WindowBackdropType="None"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">

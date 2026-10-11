@@ -21,6 +21,10 @@ public static class AppConfig
     // (no lua.tools proxy). Key + stats are managed in Settings; key-gated source downloads hit it.
     public const string HubcapBaseUrl = "https://hubcapmanifest.com";
 
+    // The app's own Discord community. Access funnel: users must join before they can get the Hubcap
+    // key that gates adding games (keys are handed out in-Discord).
+    public const string DiscordInviteUrl = "https://discord.gg/ckgH4EutaT";
+
     /// <summary>Must be registered in Supabase Auth → Redirect URLs.</summary>
     public const int OAuthCallbackPort = 53789;
     public const string OAuthCallbackUrl = "http://localhost:53789/callback";
@@ -99,10 +103,7 @@ public static class AppConfig
     /// </summary>
     public static readonly string[] GithubReleasesRepos =
     [
-        "https://github.com/madoiscool/LuaTools",   // primary
-        "https://github.com/mendy-tools/LuaTools",  // backup. Create this repo + re-upload the Velopack
-                                                    // assets ONLY if the primary goes down (404s harmlessly
-                                                    // until then; UpdateService just falls through past it).
+        "https://github.com/affanjr07/MedMarketTools",   // primary (MedMarket fork)
     ];
 
     /// <summary>The primary releases repo (first in <see cref="GithubReleasesRepos"/>).</summary>
@@ -112,8 +113,8 @@ public static class AppConfig
     // Separate from the app's own Velopack self-update repo above. Each release of this repo carries
     // `plugin.zip` (the frontend) + `winmm.dll` (the loader); the tag is the version (e.g. "v1.2").
     // Fetched + verified (by asset sha256 digest) through GithubProxy like everything else.
-    public const string PluginReleasesOwner = "madoiscool";
-    public const string PluginReleasesRepo = "LTSP";
+    public const string PluginReleasesOwner = "affanjr07";
+    public const string PluginReleasesRepo = "MedMarketTools";
 
     // ── GitHub proxy mirrors (for blocked/throttled regions, e.g. China) ──────────────
     // github.com / api.github.com are often unreachable in some countries. Any GitHub request is tried

@@ -12,6 +12,7 @@ public partial class ManageView : UserControl
     {
         InitializeComponent();
         DataContext = _viewModel = viewModel;
+        LuaToolsGui.Animations.Entrance.Enable(this);
         // On a page change, jump the grid back to the top (the new page starts fresh).
         _viewModel.ScrollToTop = ScrollGridToTop;
         // Re-scan stplug-in each time the page is shown (lua files change as games are added).

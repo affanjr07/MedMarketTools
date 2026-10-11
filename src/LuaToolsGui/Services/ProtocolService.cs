@@ -22,7 +22,7 @@ public static class ProtocolService
 
             using var protoKey = Registry.CurrentUser.CreateSubKey(
                 $@"Software\Classes\{ProtocolName}");
-            protoKey.SetValue("", "URL:LuaTools Protocol");
+            protoKey.SetValue("", "URL:MedMarketTools Protocol");
             protoKey.SetValue("URL Protocol", "");
         }
         catch { }

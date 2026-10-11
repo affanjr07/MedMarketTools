@@ -11,6 +11,7 @@ public partial class HomeView : UserControl
     {
         InitializeComponent();
         DataContext = _viewModel = viewModel;
+        LuaToolsGui.Animations.Entrance.Enable(this);
         Loaded += async (_, _) => await _viewModel.LoadAsync();
     }
 }

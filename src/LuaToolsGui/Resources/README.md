@@ -1,6 +1,6 @@
 # Translations
 
-LuaTools is translated into 29 languages (full parity with Steam's supported languages). Help improve or
+MedMarketTools is translated into 29 languages (full parity with Steam's supported languages). Help improve or
 complete a translation, or request a new one!
 
 ## How to contribute a translation
@@ -51,7 +51,7 @@ and reference it. That way the later pass only touches the `Strings.<tag>.resx` 
    - Stored filter/sort dropdown values. They're English keys the code compares against in
      switch/equality, and what the user sees is localized separately by
      `FilterOptionDisplayConverter`. Translating the stored value breaks the filter.
-3. **Keep the brand puns playful.** `"Let's get Luing™!"` is a pun on **LuaTools** ("Lua" as a verb).
+3. **Keep the brand puns playful.** `"Let's get Luing™!"` is a pun on **MedMarketTools** ("Lua" as a verb).
    Don't translate it literally; render the same upbeat "let's go add some Luas" spirit in your language,
    and keep the ™. ("Lua" stays as-is; it's the brand.)
 4. **Match the tone.** Short labels stay short. The Mode descriptions are casual/jokey, so keep that voice.

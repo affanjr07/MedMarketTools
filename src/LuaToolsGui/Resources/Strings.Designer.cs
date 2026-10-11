@@ -56,13 +56,15 @@ public static class Strings
     public static string Settings_BotLink_Dismiss => Get(nameof(Settings_BotLink_Dismiss));
     public static string Settings_LoginRequired => Get(nameof(Settings_LoginRequired));
     public static string Settings_ManageKeyHintPrefix => Get(nameof(Settings_ManageKeyHintPrefix));
+    public static string Settings_Section_Access => Get(nameof(Settings_Section_Access));
+    public static string Settings_JoinDiscord => Get(nameof(Settings_JoinDiscord));
+    public static string Settings_AccessSteps => Get(nameof(Settings_AccessSteps));
     public static string Settings_Section_Hubcap => Get(nameof(Settings_Section_Hubcap));
     public static string Settings_HubcapKey => Get(nameof(Settings_HubcapKey));
     public static string Settings_HubcapKey_Hint => Get(nameof(Settings_HubcapKey_Hint));
     public static string Settings_HubcapKeyPlaceholder => Get(nameof(Settings_HubcapKeyPlaceholder));
     public static string Settings_HubcapValidate => Get(nameof(Settings_HubcapValidate));
     public static string Settings_HubcapClear => Get(nameof(Settings_HubcapClear));
-    public static string Settings_HubcapGetKey => Get(nameof(Settings_HubcapGetKey));
     public static string Settings_HubcapKeyOk => Get(nameof(Settings_HubcapKeyOk));
     public static string Settings_HubcapKeyOkExpiry => Get(nameof(Settings_HubcapKeyOkExpiry));
     public static string Settings_HubcapKeyBad => Get(nameof(Settings_HubcapKeyBad));

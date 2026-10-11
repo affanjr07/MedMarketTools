@@ -211,7 +211,7 @@ public partial class App : Application
                     if (!st.DllMatches)
                     {
                         var t = _host.Services.GetRequiredService<ToastService>();
-                        Dispatcher.Invoke(() => t.Show("LuaTools", "Updating plugin. Steam will restart."));
+                        Dispatcher.Invoke(() => t.Show("MedMarketTools", "Updating plugin. Steam will restart."));
                     }
                     await installer.InstallAsync(progress: null);
                 }
@@ -224,6 +224,20 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Neon-red / black branding: WPF-UI applies the OS accent as direct application resources,
+        // which shadows the accent brushes in Themes/NeonRed.xaml (a merged dictionary). Re-apply our
+        // red accent at the same level. MainWindow also merges NeonRed into its own resources so the
+        // window subtree is guaranteed to use it.
+        try
+        {
+            Wpf.Ui.Appearance.ApplicationAccentColorManager.Apply(
+                System.Windows.Media.Color.FromRgb(0xE0, 0x1F, 0x2D),
+                Wpf.Ui.Appearance.ApplicationTheme.Dark,
+                false,
+                false);
+        }
+        catch { /* accent API mismatch — the window-level override still applies */ }
 
         // Point the shared HTTP handler at the DNS setting before anything makes a request. It calls
         // this per connection rather than reading it now, so the order is not load-bearing — but doing
@@ -328,6 +342,9 @@ public partial class App : Application
         };
         _host.Services.GetRequiredService<DownloadViewModel>().RequestSignIn = navigateToSignIn;
         _host.Services.GetRequiredService<FixesViewModel>().RequestSignIn = navigateToSignIn;
+        // Downloading requires access (Hubcap key, from our Discord): route the user to Settings to set it up.
+        _host.Services.GetRequiredService<DownloadViewModel>().RequestAccessSetup = () =>
+            Dispatcher.Invoke(() => window.NavigateToSettings());
         var toast = _host.Services.GetRequiredService<ToastService>();
         toast.Attach(window.RootSnackbar); // wire the presenter before anything can raise a toast
 

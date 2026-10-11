@@ -12,6 +12,7 @@ public partial class SettingsView : UserControl
         InitializeComponent();
         DataContext = viewModel;
         _vm = viewModel;
+        LuaToolsGui.Animations.Entrance.Enable(this);
         Loaded += (_, _) => _vm.OnViewLoaded();
     }
 }

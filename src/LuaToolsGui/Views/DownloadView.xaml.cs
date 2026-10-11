@@ -10,6 +10,7 @@ public partial class DownloadView : UserControl
     {
         InitializeComponent();
         DataContext = viewModel;
+        LuaToolsGui.Animations.Entrance.Enable(this);
         // Warm the featured strips in the background (best-effort; no-op if already loaded).
         _ = viewModel.LoadFeaturedAsync();
         // Pull the latest FastFetch value each time the view appears (it's also toggleable in Settings).

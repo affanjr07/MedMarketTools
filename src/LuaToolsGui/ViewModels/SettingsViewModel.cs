@@ -375,8 +375,8 @@ public partial class SettingsViewModel : ObservableObject
         Process.Start(new ProcessStartInfo(AppConfig.ApiBaseUrl) { UseShellExecute = true });
 
     [RelayCommand]
-    private void OpenHubcap() =>
-        Process.Start(new ProcessStartInfo(AppConfig.HubcapBaseUrl) { UseShellExecute = true });
+    private void OpenDiscord() =>
+        Process.Start(new ProcessStartInfo(AppConfig.DiscordInviteUrl) { UseShellExecute = true });
 
     [RelayCommand]
     private void SignOut() => _auth.SignOut();

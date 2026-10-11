@@ -9,5 +9,6 @@ public partial class DownloadsView : UserControl
     {
         InitializeComponent();
         DataContext = viewModel;
+        LuaToolsGui.Animations.Entrance.Enable(this);
     }
 }

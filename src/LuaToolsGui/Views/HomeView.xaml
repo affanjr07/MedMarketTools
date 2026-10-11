@@ -12,49 +12,6 @@
     TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <!-- Clickable stat tile: the card look, with a hover brighten (same idiom as the recent cards). -->
-        <Style x:Key="CardTileButton" TargetType="Button">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Padding="16,14" Background="#0DFFFFFF" BorderBrush="#14FFFFFF" BorderThickness="1" CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Background" Value="#18FFFFFF" />
-                                <Setter TargetName="B" Property="BorderBrush" Value="#33FFFFFF" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <!-- Clickable status row: transparent, hover brighten. -->
-        <Style x:Key="StatusRowButton" TargetType="Button">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Padding="6,5" Background="Transparent" CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Background" Value="#14FFFFFF" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
     <Grid>
     <ScrollViewer x:Name="Root" VerticalScrollBarVisibility="Auto">
         <StackPanel MaxWidth="760" Margin="8,16,16,24">
@@ -68,26 +25,26 @@
             <!-- Stat tiles (clickable) -->
             <UniformGrid Margin="0,18,0,0" Columns="2" Rows="1">
                 <!-- Luas on board → Manage -->
-                <Button Margin="0,0,6,0" Command="{Binding OpenManageCommand}" Style="{StaticResource CardTileButton}">
+                <Button Margin="0,0,6,0" Command="{Binding OpenManageCommand}" Style="{StaticResource BrandCardButton}">
                     <StackPanel>
                         <TextBlock
                             FontSize="28"
                             FontWeight="Bold"
-                            Foreground="#a78bfa"
+                            Foreground="{StaticResource BrandAccentBrush}"
                             Text="{Binding GameCount}" />
                         <TextBlock
                             Margin="0,2,0,0"
                             FontSize="12"
-                            Foreground="#9ca3af"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                             Text="{x:Static res:Strings.Home_LuasOnBoard}" />
                     </StackPanel>
                 </Button>
                 <!-- Plugin status → Plugin page (+ inline Install when not installed) -->
-                <Button Margin="6,0,0,0" Command="{Binding OpenPluginCommand}" Style="{StaticResource CardTileButton}">
+                <Button Margin="6,0,0,0" Command="{Binding OpenPluginCommand}" Style="{StaticResource BrandCardButton}">
                     <StackPanel>
                         <TextBlock
                             FontSize="12"
-                            Foreground="#6b7280"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                             Text="{x:Static res:Strings.Home_PluginStatus}" />
                         <TextBlock
                             Margin="0,4,0,0"
@@ -109,16 +66,10 @@
             </UniformGrid>
 
             <!-- Status: Steam + account -->
-            <Border
-                Margin="0,12,0,0"
-                Padding="10,8"
-                Background="#0DFFFFFF"
-                BorderBrush="#14FFFFFF"
-                BorderThickness="1"
-                CornerRadius="10">
+            <Border Margin="0,12,0,0" Style="{StaticResource BrandInfoCard}">
                 <StackPanel>
                     <!-- Steam → Settings -->
-                    <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource StatusRowButton}">
+                    <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource BrandStatusRow}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="22" />
@@ -131,10 +82,10 @@
                                 Symbol="Games24">
                                 <ui:SymbolIcon.Style>
                                     <Style TargetType="ui:SymbolIcon">
-                                        <Setter Property="Foreground" Value="#f87171" />
+                                        <Setter Property="Foreground" Value="{StaticResource BrandDangerBrush}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding SteamFound}" Value="True">
-                                                <Setter Property="Foreground" Value="#34d399" />
+                                                <Setter Property="Foreground" Value="{StaticResource BrandSuccessBrush}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -145,7 +96,7 @@
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="12.5"
-                                Foreground="#d1d5db"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                 Text="{Binding SteamStatus}"
                                 TextTrimming="CharacterEllipsis" />
                         </Grid>
@@ -154,7 +105,7 @@
                     <Separator Margin="0,10" Background="#14FFFFFF" />
 
                     <!-- Account → Settings -->
-                    <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource StatusRowButton}">
+                    <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource BrandStatusRow}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="22" />
@@ -164,14 +115,14 @@
                                 Margin="0,1,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Foreground="#a78bfa"
+                                Foreground="{StaticResource BrandAccentBrush}"
                                 Symbol="Person24" />
                             <TextBlock
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="12.5"
-                                Foreground="#d1d5db"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                 Text="{Binding AccountStatus}" />
                         </Grid>
                     </Button>
@@ -179,7 +130,7 @@
                     <Separator Margin="0,10" Background="#14FFFFFF" />
 
                     <!-- Active mode → Mode -->
-                    <Button Command="{Binding OpenModeCommand}" Style="{StaticResource StatusRowButton}">
+                    <Button Command="{Binding OpenModeCommand}" Style="{StaticResource BrandStatusRow}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="22" />
@@ -189,14 +140,14 @@
                                 Margin="0,1,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Foreground="#a78bfa"
+                                Foreground="{StaticResource BrandAccentBrush}"
                                 Symbol="Options24" />
                             <TextBlock
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="12.5"
-                                Foreground="#d1d5db"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                 Text="{Binding ModeStatus}"
                                 TextTrimming="CharacterEllipsis" />
                         </Grid>
@@ -223,44 +174,25 @@
                         <DataTemplate>
                             <Button
                                 Margin="0,0,12,12"
-                                Padding="0"
                                 Command="{Binding DataContext.OpenGameCommand, ElementName=Root}"
                                 CommandParameter="{Binding}"
-                                Cursor="Hand"
+                                Style="{StaticResource BrandRecentCardButton}"
                                 ToolTip="{x:Static res:Strings.Home_ViewDetails}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border
-                                            x:Name="Card"
-                                            Width="170"
-                                            Background="#0DFFFFFF"
-                                            BorderBrush="#14FFFFFF"
-                                            BorderThickness="1"
-                                            CornerRadius="10">
-                                            <StackPanel>
-                                                <Border
-                                                    Height="80"
-                                                    Background="#11FFFFFF"
-                                                    ClipToBounds="True"
-                                                    CornerRadius="10,10,0,0">
-                                                    <Image Source="{Binding Cover}" Stretch="UniformToFill" />
-                                                </Border>
-                                                <TextBlock
-                                                    Margin="10,8,10,10"
-                                                    FontSize="12.5"
-                                                    FontWeight="SemiBold"
-                                                    Text="{Binding Name}"
-                                                    TextTrimming="CharacterEllipsis" />
-                                            </StackPanel>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Card" Property="Background" Value="#18FFFFFF" />
-                                                <Setter TargetName="Card" Property="BorderBrush" Value="#33FFFFFF" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Button.Template>
+                                <StackPanel>
+                                    <Border
+                                        Height="80"
+                                        Background="#11FFFFFF"
+                                        ClipToBounds="True"
+                                        CornerRadius="12,12,0,0">
+                                        <Image Source="{Binding Cover}" Stretch="UniformToFill" />
+                                    </Border>
+                                    <TextBlock
+                                        Margin="10,8,10,10"
+                                        FontSize="12.5"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

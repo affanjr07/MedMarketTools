@@ -368,7 +368,7 @@ public class AuthService
 
     private static string ResultPage(bool ok, string? error) => $$"""
         <!doctype html>
-        <html><head><meta charset="utf-8"><title>LuaTools</title>
+        <html><head><meta charset="utf-8"><title>MedMarketTools</title>
         <style>
           body { background:#0b0b12; color:#e5e7eb; font-family:'Segoe UI',sans-serif;
                  display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
@@ -379,7 +379,7 @@ public class AuthService
         </style></head>
         <body><div class="card">
           <h1>{{(ok ? "Signed in!" : "Sign-in failed")}}</h1>
-          <p>{{(ok ? "You can close this tab and return to LuaTools." : WebUtility.HtmlEncode(error ?? "Please try again from the app."))}}</p>
+          <p>{{(ok ? "You can close this tab and return to MedMarketTools." : WebUtility.HtmlEncode(error ?? "Please try again from the app."))}}</p>
         </div></body></html>
         """;
 }

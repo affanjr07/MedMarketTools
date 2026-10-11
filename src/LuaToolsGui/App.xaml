@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
+                <ResourceDictionary Source="Themes/NeonRed.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />

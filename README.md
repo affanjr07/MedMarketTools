@@ -3,20 +3,20 @@
 
 </p>
 
-# LuaTools
+# MedMarketTools
 <p>
   <img align="right" height="250" src="https://github.com/user-attachments/assets/df083fb0-9be7-4690-9f0f-c8b0a73da881" />
 
-  [Discord](https://discord.gg/luatools) • [Website](https://lua.tools) • [Git Mirror](https://git.lua.tools/luatools)
+  [Discord](https://discord.gg/ckgH4EutaT) • [Website](https://lua.tools) • [Git Mirror](https://git.lua.tools/luatools)
   
   A Windows desktop client for managing Steam manifest/lua configurations, built with WPF on .NET 8.
     
-  LuaTools browses and installs manifest sources, edits `stplug-in` lua files (depot pinning,
+  MedMarketTools browses and installs manifest sources, edits `stplug-in` lua files (depot pinning,
   per-depot enable/disable), manages unlocker modes, and injects a companion plugin into Steam's
   store pages.
   
   It ships fully translated in 29 languages and auto-updates via Velopack.
-  <br><sub>Found a translation error? Tell us about it over on [Discord](https://discord.gg/luatools)</sub>
+  <br><sub>Found a translation error? Tell us about it over on [Discord](https://discord.gg/ckgH4EutaT)</sub>
 </p>
 
 ## Statistics
@@ -41,7 +41,7 @@
   the full SDK
 
 ## Installation
-You can find release builds on the [luatools website](https://lua.tools/app) or in the [releases](https://github.com/madoiscool/LuaTools/releases/latest) tab. 
+You can find release builds on the [MedMarketTools website](https://lua.tools/app) or in the [releases](https://github.com/madoiscool/LuaTools/releases/latest) tab. 
 
 ## Credits / Adjacent software
 

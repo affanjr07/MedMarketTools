@@ -106,12 +106,12 @@
                     <ControlTemplate TargetType="Button">
                         <Border
                             x:Name="Bd"
-                            Background="#0DFFFFFF"
-                            BorderBrush="#14FFFFFF"
+                            Background="{DynamicResource BrandCardBgBrush}"
+                            BorderBrush="{DynamicResource BrandCardBorderBrush}"
                             BorderThickness="1"
-                            CornerRadius="8">
+                            CornerRadius="{StaticResource BrandCardRadius}">
                             <StackPanel>
-                                <Border CornerRadius="7,7,0,0">
+                                <Border CornerRadius="11,11,0,0">
                                     <Image
                                         Height="89"
                                         Source="{Binding Image}"
@@ -129,8 +129,8 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#1AFFFFFF" />
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="#33a78bfa" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrandCardHoverBgBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BrandCardHoverBorderBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -162,10 +162,10 @@
             <!-- Autocomplete results -->
             <Border
                 Margin="0,6,0,0"
-                Background="#14141c"
-                BorderBrush="#14FFFFFF"
+                Background="{DynamicResource SolidBackgroundFillColorTertiaryBrush}"
+                BorderBrush="{DynamicResource BrandCardBorderBrush}"
                 BorderThickness="1"
-                CornerRadius="10"
+                CornerRadius="12"
                 Visibility="{Binding IsResultsOpen, Converter={StaticResource BoolToVis}}">
                 <ItemsControl ItemsSource="{Binding SearchResults}">
                     <ItemsControl.ItemTemplate>
@@ -274,15 +274,15 @@
             <!-- Game info card -->
             <Border
                 Margin="0,14,0,0"
-                Background="#0DFFFFFF"
-                BorderBrush="#12FFFFFF"
+                Background="{DynamicResource BrandCardBgBrush}"
+                BorderBrush="{DynamicResource BrandCardBorderBrush}"
                 BorderThickness="1"
-                CornerRadius="8"
+                CornerRadius="{StaticResource BrandCardRadius}"
                 Visibility="{Binding HasDetails, Converter={StaticResource BoolToVis}}">
                 <StackPanel>
                     <Border
                         MaxHeight="180"
-                        CornerRadius="8,8,0,0">
+                        CornerRadius="12,12,0,0">
                         <Image Source="{Binding Details.HeaderImage}" Stretch="UniformToFill" />
                     </Border>
                     <StackPanel Margin="12,8,12,10">
@@ -295,8 +295,8 @@
                                 Margin="8,0,0,0"
                                 Padding="6,1.5"
                                 VerticalAlignment="Center"
-                                Background="#26a78bfa"
-                                BorderBrush="#40a78bfa"
+                                Background="{DynamicResource BrandAccentSoftBrush}"
+                                BorderBrush="{DynamicResource BrandAccentBrush}"
                                 BorderThickness="1"
                                 CornerRadius="4"
                                 Visibility="{Binding Details.IsDlc, Converter={StaticResource BoolToVis}}">
