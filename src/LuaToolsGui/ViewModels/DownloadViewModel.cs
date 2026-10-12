@@ -519,6 +519,17 @@ public partial class DownloadViewModel : ObservableObject
             Error = Resources.Strings.Add_Err_Generic;
             return;
         }
+
+        // Access gate: Discord membership + a Hubcap key must be set up BEFORE we look for sources.
+        // Route the user to Settings' Access section instead of letting an empty source list surface
+        // a misleading "no available sources" error.
+        if (!await EnsureAccessedAsync()) return;
+        if (!HasHubcapAccess())
+        {
+            await PromptAccessSetupAsync();
+            return;
+        }
+
         ResetResults();
         IsChecking = true;
         try
