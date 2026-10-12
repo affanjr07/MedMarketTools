@@ -25,6 +25,17 @@ public static class AppConfig
     // key that gates adding games (keys are handed out in-Discord).
     public const string DiscordInviteUrl = "https://discord.gg/ckgH4EutaT";
 
+    // ── Discord gate (join + role verification) ──────────────────────
+    // Adding games requires a verified Discord member: the user must join the server AND hold the
+    // required role. Verification is a one-time OAuth2 (PKCE) check against the Discord API
+    // (scopes: identify guilds guilds.members.read), then cached locally. The role is handed out by
+    // our own Discord bot.
+    public const string DiscordClientId = "1559213732838776993";
+    public const string DiscordGuildId = "1558798780441042985";
+    public const string DiscordRequiredRoleId = "1559215377442013254";
+    public const string DiscordInviteCode = "ckgH4EutaT";
+
+
     /// <summary>Must be registered in Supabase Auth → Redirect URLs.</summary>
     public const int OAuthCallbackPort = 53789;
     public const string OAuthCallbackUrl = "http://localhost:53789/callback";

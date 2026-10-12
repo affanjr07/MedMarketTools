@@ -660,5 +660,26 @@ Cancel - keep downloading</value></data>
   <data name="Downloads_ClearHistory_Confirm" xml:space="preserve"><value>Remove all {0} entries from the download history? Downloaded files are not affected.</value></data>
   <data name="Settings_Section_Access" xml:space="preserve"><value>ACCESS</value></data>
   <data name="Settings_JoinDiscord" xml:space="preserve"><value>Join our Discord</value></data>
-  <data name="Settings_AccessSteps" xml:space="preserve"><value>Adding games needs a Hubcap key. 1) Join our Discord server. 2) Get your key there. 3) Paste it below to unlock adding games.</value></data>
+  <data name="Settings_AccessSteps" xml:space="preserve"><value>Adding games is members-only. 1) Join our Discord server. 2) Verify your membership below. 3) Paste your Hubcap key to unlock adding games.</value></data>
+  <data name="Settings_AccessVerify" xml:space="preserve"><value>Verify membership</value></data>
+  <data name="Settings_AccessReverify" xml:space="preserve"><value>Verify again</value></data>
+  <data name="Settings_AccessVerifying" xml:space="preserve"><value>Waiting for your browser…</value></data>
+  <data name="Settings_AccessVerified" xml:space="preserve"><value>Membership verified — you're all set.</value></data>
+  <data name="Settings_AccessVerifiedAs" xml:space="preserve"><value>Membership verified as {0}.</value></data>
+  <data name="Settings_AccessNotVerified" xml:space="preserve"><value>Not verified. Join the server, then verify to unlock adding games.</value></data>
+  <data name="Onboarding_Access_Title" xml:space="preserve"><value>Join our Discord</value></data>
+  <data name="Onboarding_Access_Detail" xml:space="preserve"><value>Adding games requires membership in our Discord server. Join, then verify your membership.</value></data>
+  <data name="Onboarding_Access_Join" xml:space="preserve"><value>Join Discord</value></data>
+  <data name="Onboarding_Access_Verify" xml:space="preserve"><value>Verify membership</value></data>
+  <data name="Onboarding_Access_Verified" xml:space="preserve"><value>Membership verified</value></data>
+  <data name="Add_AccessNeeded" xml:space="preserve"><value>Join our Discord and verify to add games.</value></data>
+  <data name="Add_AccessNeeded_Tip" xml:space="preserve"><value>Open Settings → Access to join the server and verify your membership.</value></data>
+  <data name="Home_AccessVerified" xml:space="preserve"><value>Discord access verified</value></data>
+  <data name="Home_AccessNotVerified" xml:space="preserve"><value>Discord access not verified</value></data>
+  <data name="Discord_Err_StateMismatch" xml:space="preserve"><value>Security check failed. Please try again.</value></data>
+  <data name="Discord_Err_Generic" xml:space="preserve"><value>Verification failed. Please try again.</value></data>
+  <data name="Discord_Err_NotInServer" xml:space="preserve"><value>You're not in the Discord server yet. Join, then verify again.</value></data>
+  <data name="Discord_Err_NoRole" xml:space="preserve"><value>You don't have the required role yet. Follow the steps in Discord, then verify again.</value></data>
+  <data name="Discord_Err_Denied" xml:space="preserve"><value>Verification was cancelled.</value></data>
+  <data name="Discord_Err_TokenExchange" xml:space="preserve"><value>Discord rejected the request (HTTP {0}). Please try again.</value></data>
 </root>

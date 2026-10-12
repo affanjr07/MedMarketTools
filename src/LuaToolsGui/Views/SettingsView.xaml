@@ -50,13 +50,49 @@
                         FontWeight="SemiBold"
                         Text="{x:Static res:Strings.Settings_AccessSteps}"
                         TextWrapping="Wrap" />
-                    <ui:Button
-                        Margin="0,10,0,0"
-                        HorizontalAlignment="Left"
-                        Appearance="Primary"
-                        Command="{Binding OpenDiscordCommand}"
-                        Content="{x:Static res:Strings.Settings_JoinDiscord}"
-                        Icon="{ui:SymbolIcon Person24}" />
+                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                        <ui:Button
+                            Appearance="Secondary"
+                            Command="{Binding OpenDiscordCommand}"
+                            Content="{x:Static res:Strings.Settings_JoinDiscord}"
+                            Icon="{ui:SymbolIcon Person24}" />
+                        <ui:Button
+                            Margin="8,0,0,0"
+                            Appearance="Primary"
+                            Command="{Binding VerifyAccessCommand}"
+                            IsEnabled="{Binding CanVerifyAccess}"
+                            Visibility="{Binding ShowVerifyButton, Converter={StaticResource BoolToVis}}">
+                            <ui:Button.Content>
+                                <Grid>
+                                    <TextBlock Text="{x:Static res:Strings.Settings_AccessVerify}" Visibility="{Binding IsVerifyingAccess, Converter={StaticResource InverseBoolToVis}}" />
+                                    <TextBlock Text="{x:Static res:Strings.Settings_AccessVerifying}" Visibility="{Binding IsVerifyingAccess, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+                            </ui:Button.Content>
+                        </ui:Button>
+                    </StackPanel>
+                    <!-- Verified status (green) vs not-yet (grey) -->
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        FontSize="12"
+                        Foreground="#4ade80"
+                        Text="{Binding AccessStatusText}"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding IsAccessVerified, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        FontSize="12"
+                        Foreground="#9ca3af"
+                        Text="{Binding AccessStatusText}"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding IsAccessVerified, Converter={StaticResource InverseBoolToVis}}" />
+                    <!-- Verification error -->
+                    <TextBlock
+                        Margin="0,6,0,0"
+                        FontSize="11.5"
+                        Foreground="#f87171"
+                        Text="{Binding AccessError}"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding AccessError, Converter={StaticResource NullToCollapsed}}" />
                 </StackPanel>
             </Border>
 

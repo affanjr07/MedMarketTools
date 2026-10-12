@@ -22,6 +22,7 @@ public partial class SettingsViewModel : ObservableObject
     private readonly AuthService _auth;
     private readonly SteamService _steam;
     private readonly HubcapService _hubcap;
+    private readonly DiscordGateService _gate;
 
     [ObservableProperty] private string? _displayName;
     [ObservableProperty] private string? _email;
@@ -244,14 +245,17 @@ public partial class SettingsViewModel : ObservableObject
     public Action? RequestRestartPrompt { get; set; }
 
     public SettingsViewModel(SettingsService settings, AuthService auth, SteamService steam,
-        HubcapService hubcap)
+        HubcapService hubcap, DiscordGateService gate)
     {
         _settings = settings;
         _auth = auth;
         _steam = steam;
         _hubcap = hubcap;
+        _gate = gate;
         _auth.AuthStateChanged += RefreshAccount;
+        _gate.Changed += RefreshAccess;
         RefreshAccount();
+        RefreshAccess();
         RefreshSteam();
         _autoUpdateApps = settings.AutoUpdateApps; // init from saved value (default ON) without triggering Save
         _fastFetch = settings.FastFetch;
@@ -294,6 +298,77 @@ public partial class SettingsViewModel : ObservableObject
     /// <summary>Hide the re-link banner for this session (returns next launch if still a bot account).</summary>
     [RelayCommand]
     private void DismissBotBanner() => BotBannerDismissed = true;
+
+    // ── Discord access (join + verify) ──────────────────────────────
+    /// <summary>True once the user is a verified Discord member holding the required role.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowVerifyButton))]
+    private bool _isAccessVerified;
+
+    /// <summary>Discord handle captured at verification time (null until verified).</summary>
+    [ObservableProperty] private string? _discordHandle;
+
+    /// <summary>True while the OAuth browser flow is in flight.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanVerifyAccess))]
+    private bool _isVerifyingAccess;
+
+    public bool CanVerifyAccess => !IsVerifyingAccess;
+
+    /// <summary>Show the Verify button only until the membership is verified.</summary>
+    public bool ShowVerifyButton => !IsAccessVerified;
+
+    /// <summary>Error text from the last verification attempt (null when none).</summary>
+    [ObservableProperty] private string? _accessError;
+
+    /// <summary>One-line status under the access row.</summary>
+    public string AccessStatusText => IsAccessVerified
+        ? (DiscordHandle is { Length: > 0 } h
+            ? string.Format(Resources.Strings.Settings_AccessVerifiedAs, h)
+            : Resources.Strings.Settings_AccessVerified)
+        : Resources.Strings.Settings_AccessNotVerified;
+
+    public void RefreshAccess()
+    {
+        IsAccessVerified = _gate.IsVerified;
+        DiscordHandle = _gate.Username;
+        OnPropertyChanged(nameof(AccessStatusText));
+        if (IsAccessVerified)
+        {
+            AccessError = null;
+            LoginRequiredMessage = null;
+        }
+    }
+
+    /// <summary>Open the Discord invite (native client first, browser fallback).</summary>
+    [RelayCommand]
+    private void JoinDiscord() => DiscordLauncher.OpenInvite();
+
+    /// <summary>Run the Discord OAuth flow and check membership + role.</summary>
+    [RelayCommand]
+    private async Task VerifyAccessAsync()
+    {
+        if (IsVerifyingAccess) return;
+        IsVerifyingAccess = true;
+        AccessError = null;
+        try
+        {
+            await _gate.VerifyAsync();
+        }
+        catch (DiscordGateException ex)
+        {
+            AccessError = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            AccessError = ex.Message;
+        }
+        finally
+        {
+            IsVerifyingAccess = false;
+            RefreshAccess();
+        }
+    }
 
     [RelayCommand]
     private async Task SignInAsync()
@@ -375,8 +450,7 @@ public partial class SettingsViewModel : ObservableObject
         Process.Start(new ProcessStartInfo(AppConfig.ApiBaseUrl) { UseShellExecute = true });
 
     [RelayCommand]
-    private void OpenDiscord() =>
-        Process.Start(new ProcessStartInfo(AppConfig.DiscordInviteUrl) { UseShellExecute = true });
+    private void OpenDiscord() => DiscordLauncher.OpenInvite();
 
     [RelayCommand]
     private void SignOut() => _auth.SignOut();

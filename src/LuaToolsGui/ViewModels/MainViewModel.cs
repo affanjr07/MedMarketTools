@@ -8,7 +8,6 @@ namespace LuaToolsGui.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly AuthService _auth;
     private readonly SteamService _steam;
 
     /// <summary>The first-run welcome overlay VM (hosted at the window root, shown via its IsOpen).</summary>
@@ -27,52 +26,18 @@ public partial class MainViewModel : ObservableObject
         return plus >= 0 ? ver[..plus] : ver;
     }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsRealUser))]
-    [NotifyPropertyChangedFor(nameof(FooterStatus))]
-    private bool _isGuest = true;
+    /// <summary>Bottom-of-pane line: the app version.</summary>
+    public string FooterStatus => VersionLabel;
 
-    public bool IsRealUser => !IsGuest;
-
-    /// <summary>Bottom-of-pane line: version plus auth state. No username shown (privacy).</summary>
-    public string FooterStatus => $"{VersionLabel} · {(IsGuest ? Resources.Strings.Nav_Footer_Guest : Resources.Strings.Nav_Footer_LoggedIn)}";
-
-    [ObservableProperty] private bool _isSigningIn;
-    [ObservableProperty] private string? _signInError;
-
-    public MainViewModel(AuthService auth, SteamService steam, OnboardingViewModel onboarding)
+    public MainViewModel(SteamService steam, OnboardingViewModel onboarding)
     {
-        _auth = auth;
         _steam = steam;
         Onboarding = onboarding;
-        _auth.AuthStateChanged += () => IsGuest = _auth.IsGuest;
     }
 
-    public async Task InitializeAsync()
-    {
-        await _auth.InitializeAsync();
-        IsGuest = _auth.IsGuest;
-    }
-
-    [RelayCommand]
-    private async Task SignInAsync()
-    {
-        if (IsSigningIn) return;
-        IsSigningIn = true;
-        SignInError = null;
-        try
-        {
-            await _auth.SignInAsync();
-        }
-        catch (Exception ex)
-        {
-            SignInError = ex.Message;
-        }
-        finally
-        {
-            IsSigningIn = false;
-        }
-    }
+    /// <summary>Kept for the window's Loaded handler; access state is read live from
+    /// <see cref="Services.DiscordGateService"/>, so there is nothing to restore here.</summary>
+    public Task InitializeAsync() => Task.CompletedTask;
 
     /// <summary>Confirm, then kill + relaunch Steam so newly added/removed luas take effect.</summary>
     [RelayCommand]
