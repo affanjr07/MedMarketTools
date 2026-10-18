@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel MaxWidth="760" Margin="8,16,16,8">
+            <StackPanel MaxWidth="900" Margin="24,20,24,8">
 
                 <!-- Header -->
                 <Grid>
@@ -27,10 +27,8 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel>
-                        <TextBlock
-                            FontSize="22"
-                            FontWeight="Bold"
-                            Text="{x:Static res:Strings.Mode_Title}" />
+                        <TextBlock Style="{StaticResource BrandPageTitle}" Text="{x:Static res:Strings.Mode_Title}" />
+                        <Border Style="{StaticResource BrandTitleRule}" />
                         <TextBlock
                             Margin="0,2,0,0"
                             FontSize="13"
@@ -66,7 +64,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <ui:SymbolIcon
                                                 VerticalAlignment="Center"
-                                                Foreground="#a78bfa"
+                                                Foreground="#ff7a89"
                                                 Symbol="Wrench24" />
                                             <TextBlock
                                                 Margin="10,0,0,0"
@@ -109,14 +107,14 @@
                                                     <ui:SymbolIcon
                                                         VerticalAlignment="Center"
                                                         FontSize="10"
-                                                        Foreground="#60a5fa"
+                                                        Foreground="#ff7a89"
                                                         Symbol="Star24" />
                                                     <TextBlock
                                                         Margin="4,0,0,0"
                                                         VerticalAlignment="Center"
                                                         FontSize="10.5"
                                                         FontWeight="SemiBold"
-                                                        Foreground="#60a5fa"
+                                                        Foreground="#ff7a89"
                                                         Text="{x:Static res:Strings.Mode_Recommended}" />
                                                 </StackPanel>
                                             </Border>
@@ -155,14 +153,14 @@
                                                     <ui:SymbolIcon
                                                         VerticalAlignment="Center"
                                                         FontSize="10"
-                                                        Foreground="#c4b5fd"
+                                                        Foreground="{StaticResource BrandAccentHoverBrush}"
                                                         Symbol="Cloud24" />
                                                     <TextBlock
                                                         Margin="4,0,0,0"
                                                         VerticalAlignment="Center"
                                                         FontSize="10.5"
                                                         FontWeight="SemiBold"
-                                                        Foreground="#c4b5fd"
+                                                        Foreground="{StaticResource BrandAccentHoverBrush}"
                                                         Text="{x:Static res:Strings.Mode_CloudRedirectSupport}" />
                                                 </StackPanel>
                                             </Border>
@@ -203,7 +201,7 @@
         </ScrollViewer>
 
         <!-- Fixed bottom dock: separator + CloudRedirect add-on + shared progress. -->
-        <StackPanel Grid.Row="1" MaxWidth="760" Margin="8,0,16,16">
+        <StackPanel Grid.Row="1" MaxWidth="900" Margin="24,0,24,20">
 
                 <!-- Divider between the scrolling mode cards and the docked add-on. -->
                 <Border Height="1" Margin="0,0,0,14" Background="#1FFFFFFF" />
@@ -310,7 +308,7 @@
                 Padding="20"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Background="#1c1c22"
+                Background="{DynamicResource SolidBackgroundFillColorTertiaryBrush}"
                 BorderBrush="#33FFFFFF"
                 BorderThickness="1"
                 CornerRadius="12">

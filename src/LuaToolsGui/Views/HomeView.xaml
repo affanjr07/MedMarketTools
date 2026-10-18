@@ -14,86 +14,119 @@
 
     <Grid>
     <ScrollViewer x:Name="Root" VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="760" Margin="8,16,16,24">
+        <StackPanel MaxWidth="960" Margin="24,20,24,32">
 
             <!-- Greeting -->
-            <TextBlock
-                FontSize="22"
-                FontWeight="Bold"
-                Text="{x:Static res:Strings.Home_Welcome}" />
+            <TextBlock Style="{StaticResource BrandPageTitle}" Text="{x:Static res:Strings.Home_Welcome}" />
+            <Border Style="{StaticResource BrandTitleRule}" />
 
             <!-- Stat tiles (clickable) -->
-            <UniformGrid Margin="0,18,0,0" Columns="2" Rows="1">
+            <UniformGrid Margin="0,22,0,0" Columns="2" Rows="1">
                 <!-- Luas on board → Manage -->
-                <Button Margin="0,0,6,0" Command="{Binding OpenManageCommand}" Style="{StaticResource BrandCardButton}">
-                    <StackPanel>
-                        <TextBlock
-                            FontSize="28"
-                            FontWeight="Bold"
-                            Foreground="{StaticResource BrandAccentBrush}"
-                            Text="{Binding GameCount}" />
-                        <TextBlock
-                            Margin="0,2,0,0"
-                            FontSize="12"
-                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                            Text="{x:Static res:Strings.Home_LuasOnBoard}" />
-                    </StackPanel>
+                <Button Margin="0,0,7,0" Command="{Binding OpenManageCommand}" Style="{StaticResource BrandCardButton}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource BrandIconBadge}" VerticalAlignment="Center">
+                            <ui:SymbolIcon
+                                FontSize="20"
+                                Foreground="{StaticResource BrandAccentBrush}"
+                                Symbol="Games24" />
+                        </Border>
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="15,0,0,0"
+                            VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="30"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource BrandAccentBrush}"
+                                Text="{Binding GameCount}" />
+                            <TextBlock
+                                Margin="0,1,0,0"
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                Text="{x:Static res:Strings.Home_LuasOnBoard}" />
+                        </StackPanel>
+                    </Grid>
                 </Button>
                 <!-- Plugin status → Plugin page (+ inline Install when not installed) -->
-                <Button Margin="6,0,0,0" Command="{Binding OpenPluginCommand}" Style="{StaticResource BrandCardButton}">
-                    <StackPanel>
-                        <TextBlock
-                            FontSize="12"
-                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                            Text="{x:Static res:Strings.Home_PluginStatus}" />
-                        <TextBlock
-                            Margin="0,4,0,0"
-                            FontSize="15"
-                            FontWeight="SemiBold"
-                            Foreground="{Binding PluginStatusColor}"
-                            Text="{Binding PluginStatusText}"
-                            TextTrimming="CharacterEllipsis" />
-                        <ui:Button
-                            Margin="0,10,0,0"
-                            Padding="10,4"
-                            Appearance="Primary"
-                            Command="{Binding InstallPluginCommand}"
-                            Content="{x:Static res:Strings.Plugin_Btn_Install}"
-                            IsEnabled="{Binding NotInstallingPlugin}"
-                            Visibility="{Binding ShowPluginInstall, Converter={StaticResource BoolToVis}}" />
-                    </StackPanel>
+                <Button Margin="7,0,0,0" Command="{Binding OpenPluginCommand}" Style="{StaticResource BrandCardButton}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource BrandIconBadge}" VerticalAlignment="Center">
+                            <ui:SymbolIcon
+                                FontSize="20"
+                                Foreground="{StaticResource BrandAccentBrush}"
+                                Symbol="PuzzlePiece24" />
+                        </Border>
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="15,0,0,0"
+                            VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="11.5"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                Text="{x:Static res:Strings.Home_PluginStatus}" />
+                            <TextBlock
+                                Margin="0,3,0,0"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="{Binding PluginStatusColor}"
+                                Text="{Binding PluginStatusText}"
+                                TextTrimming="CharacterEllipsis" />
+                            <ui:Button
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Left"
+                                Padding="12,4"
+                                Appearance="Primary"
+                                Command="{Binding InstallPluginCommand}"
+                                Content="{x:Static res:Strings.Plugin_Btn_Install}"
+                                IsEnabled="{Binding NotInstallingPlugin}"
+                                Visibility="{Binding ShowPluginInstall, Converter={StaticResource BoolToVis}}" />
+                        </StackPanel>
+                    </Grid>
                 </Button>
             </UniformGrid>
 
-            <!-- Status: Steam + account -->
-            <Border Margin="0,12,0,0" Style="{StaticResource BrandInfoCard}">
+            <!-- Status: Steam + account + mode -->
+            <Border Margin="0,16,0,0" Padding="7" Style="{StaticResource BrandInfoCard}">
                 <StackPanel>
                     <!-- Steam → Settings -->
                     <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource BrandStatusRow}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="22" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon
-                                Margin="0,1,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Symbol="Games24">
-                                <ui:SymbolIcon.Style>
-                                    <Style TargetType="ui:SymbolIcon">
-                                        <Setter Property="Foreground" Value="{StaticResource BrandDangerBrush}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding SteamFound}" Value="True">
-                                                <Setter Property="Foreground" Value="{StaticResource BrandSuccessBrush}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ui:SymbolIcon.Style>
-                            </ui:SymbolIcon>
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="#14FFFFFF"
+                                CornerRadius="8">
+                                <ui:SymbolIcon
+                                    FontSize="15"
+                                    Symbol="Games24">
+                                    <ui:SymbolIcon.Style>
+                                        <Style TargetType="ui:SymbolIcon">
+                                            <Setter Property="Foreground" Value="{StaticResource BrandDangerBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SteamFound}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource BrandSuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:SymbolIcon.Style>
+                                </ui:SymbolIcon>
+                            </Border>
                             <TextBlock
                                 Grid.Column="1"
-                                Margin="10,0,0,0"
+                                Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="12.5"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -102,24 +135,28 @@
                         </Grid>
                     </Button>
 
-                    <Separator Margin="0,10" Background="#14FFFFFF" />
+                    <Border Style="{StaticResource BrandDivider}" />
 
                     <!-- Account → Settings -->
                     <Button Command="{Binding OpenSettingsCommand}" Style="{StaticResource BrandStatusRow}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="22" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon
-                                Margin="0,1,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="{StaticResource BrandAccentBrush}"
-                                Symbol="Person24" />
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{StaticResource BrandAccentSoftBrush}"
+                                CornerRadius="8">
+                                <ui:SymbolIcon
+                                    FontSize="15"
+                                    Foreground="{StaticResource BrandAccentBrush}"
+                                    Symbol="Person24" />
+                            </Border>
                             <TextBlock
                                 Grid.Column="1"
-                                Margin="10,0,0,0"
+                                Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="12.5"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -127,24 +164,28 @@
                         </Grid>
                     </Button>
 
-                    <Separator Margin="0,10" Background="#14FFFFFF" />
+                    <Border Style="{StaticResource BrandDivider}" />
 
                     <!-- Active mode → Mode -->
                     <Button Command="{Binding OpenModeCommand}" Style="{StaticResource BrandStatusRow}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="22" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon
-                                Margin="0,1,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="{StaticResource BrandAccentBrush}"
-                                Symbol="Options24" />
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{StaticResource BrandAccentSoftBrush}"
+                                CornerRadius="8">
+                                <ui:SymbolIcon
+                                    FontSize="15"
+                                    Foreground="{StaticResource BrandAccentBrush}"
+                                    Symbol="Options24" />
+                            </Border>
                             <TextBlock
                                 Grid.Column="1"
-                                Margin="10,0,0,0"
+                                Margin="12,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="12.5"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -156,15 +197,12 @@
             </Border>
 
             <!-- Drag-and-drop install -->
-            <views:DropZone Margin="0,12,0,0" DataContext="{Binding Drop}" />
+            <views:DropZone Margin="0,16,0,0" DataContext="{Binding Drop}" />
 
             <!-- Recently added -->
-            <StackPanel Margin="0,22,0,0" Visibility="{Binding HasRecent, Converter={StaticResource BoolToVis}}">
-                <TextBlock
-                    FontSize="15"
-                    FontWeight="SemiBold"
-                    Text="{x:Static res:Strings.Home_RecentlyAdded}" />
-                <ItemsControl Margin="0,12,0,0" ItemsSource="{Binding Recent}">
+            <StackPanel Margin="0,26,0,0" Visibility="{Binding HasRecent, Converter={StaticResource BoolToVis}}">
+                <TextBlock Style="{StaticResource BrandSectionTitle}" Text="{x:Static res:Strings.Home_RecentlyAdded}" />
+                <ItemsControl Margin="0,14,0,0" ItemsSource="{Binding Recent}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal" />
@@ -173,21 +211,21 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button
-                                Margin="0,0,12,12"
+                                Margin="0,0,13,13"
                                 Command="{Binding DataContext.OpenGameCommand, ElementName=Root}"
                                 CommandParameter="{Binding}"
                                 Style="{StaticResource BrandRecentCardButton}"
                                 ToolTip="{x:Static res:Strings.Home_ViewDetails}">
                                 <StackPanel>
                                     <Border
-                                        Height="80"
+                                        Height="84"
                                         Background="#11FFFFFF"
                                         ClipToBounds="True"
-                                        CornerRadius="12,12,0,0">
+                                        CornerRadius="14,14,0,0">
                                         <Image Source="{Binding Cover}" Stretch="UniformToFill" />
                                     </Border>
                                     <TextBlock
-                                        Margin="10,8,10,10"
+                                        Margin="11,9,11,11"
                                         FontSize="12.5"
                                         FontWeight="SemiBold"
                                         Text="{Binding Name}"

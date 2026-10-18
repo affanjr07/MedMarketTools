@@ -49,7 +49,6 @@ public partial class App : Application
                 services.AddSingleton<PluginInstallerService>();
                 services.AddTransient<DropInstallViewModel>(); // one per page (Home, Add)
                 services.AddSingleton<AuthService>();
-                services.AddSingleton<DiscordGateService>();
                 services.AddSingleton<LuaToolsApiClient>();
                 services.AddSingleton<HubcapService>();
                 services.AddSingleton<UpdateService>();
@@ -328,16 +327,21 @@ public partial class App : Application
         // Expose the same flow to non-UI callers (the /check-updates HTTP handler).
         RunUpdateFlow = RunUpdateFlowAsync;
 
-        // Adding games requires Discord access (join + verify) and a Hubcap key. Route the user to
-        // Settings' Access section to set either up. Fixes (Denuvo) reuses the same destination.
-        Action navigateToAccess = () => Dispatcher.Invoke(() =>
+        // Settings' own "Sign in with Discord" button → browser OAuth (unchanged).
+        settingsVm.RequestSignIn = () => main.SignInCommand.ExecuteAsync(null);
+
+        // Guests hitting a protected action on other pages → navigate to Settings with context banner.
+        Func<Task> navigateToSignIn = () =>
         {
-            settingsVm.LoginRequiredMessage = LuaToolsGui.Resources.Strings.Add_AccessNeeded;
-            window.NavigateToSettings();
-        });
-        _host.Services.GetRequiredService<DownloadViewModel>().RequestAccessSetup = navigateToAccess;
-        _host.Services.GetRequiredService<FixesViewModel>().RequestSignIn =
-            () => { navigateToAccess(); return Task.CompletedTask; };
+            Dispatcher.Invoke(() =>
+            {
+                settingsVm.LoginRequiredMessage = LuaToolsGui.Resources.Strings.Settings_LoginRequired;
+                window.NavigateToSettings();
+            });
+            return Task.CompletedTask;
+        };
+        _host.Services.GetRequiredService<DownloadViewModel>().RequestSignIn = navigateToSignIn;
+        _host.Services.GetRequiredService<FixesViewModel>().RequestSignIn = navigateToSignIn;
         var toast = _host.Services.GetRequiredService<ToastService>();
         toast.Attach(window.RootSnackbar); // wire the presenter before anything can raise a toast
 

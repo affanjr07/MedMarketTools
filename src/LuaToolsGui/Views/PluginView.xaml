@@ -13,13 +13,11 @@
 
     <Grid x:Name="Root">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel MaxWidth="760" Margin="8,16,16,24">
+            <StackPanel MaxWidth="900" Margin="24,20,24,32">
 
                 <!-- Header -->
-                <TextBlock
-                    FontSize="22"
-                    FontWeight="Bold"
-                    Text="{x:Static res:Strings.Plugin_Title}" />
+                <TextBlock Style="{StaticResource BrandPageTitle}" Text="{x:Static res:Strings.Plugin_Title}" />
+                <Border Style="{StaticResource BrandTitleRule}" />
                 <TextBlock
                     Margin="0,2,0,0"
                     FontSize="13"
@@ -58,7 +56,7 @@
                                 <TextBlock
                                     FontSize="10.5"
                                     FontWeight="SemiBold"
-                                    Foreground="#c4b5fd"
+                                    Foreground="{StaticResource BrandAccentHoverBrush}"
                                     Text="{x:Static res:Strings.Plugin_Status_Installed}" />
                             </Border>
                             <Border
@@ -219,7 +217,7 @@
                     <Border Style="{StaticResource FeatureRow}">
                         <StackPanel Orientation="Horizontal">
                             <Border Width="34" Height="34" VerticalAlignment="Center" Background="#1aa78bfa" CornerRadius="8">
-                                <ui:SymbolIcon FontSize="18" Foreground="#a78bfa" Symbol="AddCircle24" />
+                                <ui:SymbolIcon FontSize="18" Foreground="#ff7a89" Symbol="AddCircle24" />
                             </Border>
                             <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="12.5" Foreground="#c9ced6" Text="{x:Static res:Strings.Plugin_Feature_StoreButton}" TextWrapping="Wrap" />
                         </StackPanel>
@@ -228,7 +226,7 @@
                     <Border Style="{StaticResource FeatureRow}">
                         <StackPanel Orientation="Horizontal">
                             <Border Width="34" Height="34" VerticalAlignment="Center" Background="#1aa78bfa" CornerRadius="8">
-                                <ui:SymbolIcon FontSize="18" Foreground="#a78bfa" Symbol="ArrowSync24" />
+                                <ui:SymbolIcon FontSize="18" Foreground="#ff7a89" Symbol="ArrowSync24" />
                             </Border>
                             <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="12.5" Foreground="#c9ced6" Text="{x:Static res:Strings.Plugin_Feature_AutoUpdate}" TextWrapping="Wrap" />
                         </StackPanel>
@@ -237,7 +235,7 @@
                     <Border Style="{StaticResource FeatureRow}">
                         <StackPanel Orientation="Horizontal">
                             <Border Width="34" Height="34" VerticalAlignment="Center" Background="#1aa78bfa" CornerRadius="8">
-                                <ui:SymbolIcon FontSize="18" Foreground="#a78bfa" Symbol="PuzzlePiece24" />
+                                <ui:SymbolIcon FontSize="18" Foreground="#ff7a89" Symbol="PuzzlePiece24" />
                             </Border>
                             <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="12.5" Foreground="#c9ced6" Text="{x:Static res:Strings.Plugin_Feature_Millennium}" TextWrapping="Wrap" />
                         </StackPanel>

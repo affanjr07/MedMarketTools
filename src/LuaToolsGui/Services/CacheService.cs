@@ -50,14 +50,6 @@ public class CacheData
     public long SteamlessCheckedAtMs { get; set; }
     public string? SteamAutoCrackVersion { get; set; }
     public long SteamAutoCrackCheckedAtMs { get; set; }
-
-    // ── Discord access verification (join + role check) ──────────────
-    // True once the user has completed the one-time Discord OAuth2 and been confirmed as a member of
-    // the server holding the required role. Persisted so we only ask once per install.
-    public bool DiscordVerified { get; set; }
-    public string? DiscordUserId { get; set; }
-    public string? DiscordUsername { get; set; }
-    public long DiscordVerifiedAtMs { get; set; }
 }
 
 /// <summary>
@@ -232,56 +224,6 @@ public class CacheService
         set { _cache.OnboardingComplete = value; Save(); }
     }
 
-    // ── Discord access verification (join + role check) ──────────────
-
-    /// <summary>True once the user is confirmed as a Discord member holding the required role.</summary>
-    public bool DiscordVerified
-    {
-        get => _cache.DiscordVerified;
-        set { _cache.DiscordVerified = value; Save(); }
-    }
-
-    /// <summary>Discord user id captured at verification time (scope: identify).</summary>
-    public string? DiscordUserId
-    {
-        get => _cache.DiscordUserId;
-        set { _cache.DiscordUserId = string.IsNullOrWhiteSpace(value) ? null : value; Save(); }
-    }
-
-    /// <summary>Discord username/handle captured at verification time, for display.</summary>
-    public string? DiscordUsername
-    {
-        get => _cache.DiscordUsername;
-        set { _cache.DiscordUsername = string.IsNullOrWhiteSpace(value) ? null : value; Save(); }
-    }
-
-    /// <summary>Unix-ms of the successful verification; 0 = never.</summary>
-    public long DiscordVerifiedAtMs
-    {
-        get => _cache.DiscordVerifiedAtMs;
-        set { _cache.DiscordVerifiedAtMs = value; Save(); }
-    }
-
-    /// <summary>Record a successful verification and clear it in one place.</summary>
-    public void SaveDiscordVerification(string userId, string? username)
-    {
-        _cache.DiscordVerified = true;
-        _cache.DiscordUserId = userId;
-        _cache.DiscordUsername = username;
-        _cache.DiscordVerifiedAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        Save();
-    }
-
-    /// <summary>Forget the verification (e.g. user re-verifies with a different account).</summary>
-    public void ClearDiscordVerification()
-    {
-        _cache.DiscordVerified = false;
-        _cache.DiscordUserId = null;
-        _cache.DiscordUsername = null;
-        _cache.DiscordVerifiedAtMs = 0;
-        Save();
-    }
-
     private void Load()
     {
         try
@@ -316,11 +258,7 @@ public class CacheService
             && _cache.SteamlessVersion is null
             && _cache.SteamlessCheckedAtMs == 0
             && _cache.SteamAutoCrackVersion is null
-            && _cache.SteamAutoCrackCheckedAtMs == 0
-            && !_cache.DiscordVerified
-            && _cache.DiscordUserId is null
-            && _cache.DiscordUsername is null
-            && _cache.DiscordVerifiedAtMs == 0;
+            && _cache.SteamAutoCrackCheckedAtMs == 0;
         if (empty)
         {
             try { if (File.Exists(FilePath)) File.Delete(FilePath); } catch { /* best effort */ }

@@ -23,7 +23,7 @@ public partial class HomeViewModel : ObservableObject
     public Action? NavigateToMode { get; set; }
 
     private readonly SteamService _steam;
-    private readonly DiscordGateService _gate;
+    private readonly AuthService _auth;
     private readonly SteamAppListCache _appList;
     private readonly SteamAppInfoCache _appInfo;
     private readonly CoverCache _covers;
@@ -59,17 +59,22 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty] private bool _steamFound;
     [ObservableProperty] private string _steamStatus = Resources.Strings.Home_CheckingSteam;
 
-    [ObservableProperty] private string _accountStatus = Resources.Strings.Home_AccessNotVerified;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsGuest))]
+    private bool _isSignedIn;
+
+    public bool IsGuest => !IsSignedIn;
+    [ObservableProperty] private string _accountStatus = Resources.Strings.Home_BrowsingAsGuest;
 
     // ── Active unlocker mode ────────────────────────────────────────
     [ObservableProperty] private string _modeStatus = Resources.Strings.Home_NoModeSelected;
 
-    public HomeViewModel(SteamService steam, DiscordGateService gate,
+    public HomeViewModel(SteamService steam, AuthService auth,
         SteamAppListCache appList, SteamAppInfoCache appInfo, CoverCache covers, DropInstallViewModel drop,
         UnlockerService unlocker, PluginInstallerService plugin, ToastService toast)
     {
         _steam = steam;
-        _gate = gate;
+        _auth = auth;
         _appList = appList;
         _appInfo = appInfo;
         _covers = covers;
@@ -77,7 +82,7 @@ public partial class HomeViewModel : ObservableObject
         _plugin = plugin;
         _toast = toast;
         Drop = drop;
-        _gate.Changed += RefreshAccount;
+        _auth.AuthStateChanged += RefreshAccount;
         // Library refresh on any install (drag-drop, plugin, Add page, Fixes) is driven by
         // LuaInstaller.Installed, wired in App → RefreshLibraryAsync.
     }
@@ -202,8 +207,9 @@ public partial class HomeViewModel : ObservableObject
 
     private void RefreshAccount()
     {
-        AccountStatus = _gate.IsVerified
-            ? Resources.Strings.Home_AccessVerified
-            : Resources.Strings.Home_AccessNotVerified;
+        IsSignedIn = _auth.IsSignedIn;
+        AccountStatus = IsSignedIn
+            ? (_auth.DisplayName is { } n ? string.Format(Resources.Strings.Home_SignedInAs, n) : Resources.Strings.Home_SignedIn)
+            : Resources.Strings.Home_BrowsingAsGuest;
     }
 }

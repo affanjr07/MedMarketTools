@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="LuaToolsGui.Views.BuildsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -112,13 +112,13 @@
                                 Margin="6,0,0,0"
                                 Padding="5,1"
                                 VerticalAlignment="Center"
-                                Background="#2a2440"
+                                Background="{StaticResource BrandAccentSoftBrush}"
                                 CornerRadius="4"
                                 Visibility="{Binding IsDlc, Converter={StaticResource BoolToVis}}">
                                 <TextBlock
                                     FontSize="9.5"
                                     FontWeight="SemiBold"
-                                    Foreground="#c4b5fd"
+                                    Foreground="{StaticResource BrandAccentHoverBrush}"
                                     Text="DLC" />
                             </Border>
                             <Border
@@ -126,7 +126,7 @@
                                 Margin="6,0,0,0"
                                 Padding="5,1"
                                 VerticalAlignment="Center"
-                                Background="#3a3320"
+                                Background="#26FBBF24"
                                 CornerRadius="4"
                                 Visibility="{Binding IsShared, Converter={StaticResource BoolToVis}}">
                                 <TextBlock
@@ -256,7 +256,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid x:Name="Root" Margin="8,16,16,8">
+    <Grid x:Name="Root" Margin="24,20,24,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -269,10 +269,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock
-                    FontSize="22"
-                    FontWeight="Bold"
-                    Text="{x:Static res:Strings.Builds_Title}" />
+                <TextBlock Style="{StaticResource BrandPageTitle}" Text="{x:Static res:Strings.Builds_Title}" />
+                <Border Style="{StaticResource BrandTitleRule}" />
                 <TextBlock
                     Margin="0,2,0,0"
                     FontSize="11.5"
@@ -845,13 +843,13 @@
                                                                 Margin="6,0,0,0"
                                                                 Padding="5,1"
                                                                 VerticalAlignment="Center"
-                                                                Background="#2a2440"
+                                                                Background="{StaticResource BrandAccentSoftBrush}"
                                                                 CornerRadius="4"
                                                                 Visibility="{Binding IsDlc, Converter={StaticResource BoolToVis}}">
                                                                 <TextBlock
                                                                     FontSize="9.5"
                                                                     FontWeight="SemiBold"
-                                                                    Foreground="#c4b5fd"
+                                                                    Foreground="{StaticResource BrandAccentHoverBrush}"
                                                                     Text="DLC" />
                                                             </Border>
                                                             <Border
@@ -859,7 +857,7 @@
                                                                 Margin="6,0,0,0"
                                                                 Padding="5,1"
                                                                 VerticalAlignment="Center"
-                                                                Background="#3a3320"
+                                                                Background="#26FBBF24"
                                                                 CornerRadius="4"
                                                                 Visibility="{Binding IsShared, Converter={StaticResource BoolToVis}}">
                                                                 <TextBlock

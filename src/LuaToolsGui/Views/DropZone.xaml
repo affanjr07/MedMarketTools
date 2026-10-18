@@ -30,7 +30,7 @@
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsDragOver}" Value="True">
                             <Setter Property="Background" Value="#207c3aed" />
-                            <Setter Property="BorderBrush" Value="#a78bfa" />
+                            <Setter Property="BorderBrush" Value="#ff7a89" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -43,7 +43,7 @@
                 <ui:SymbolIcon
                     VerticalAlignment="Center"
                     FontSize="22"
-                    Foreground="#a78bfa"
+                    Foreground="#ff7a89"
                     Symbol="ArrowDownload24" />
                 <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
                     <TextBlock

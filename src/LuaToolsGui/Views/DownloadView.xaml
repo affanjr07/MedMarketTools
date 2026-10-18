@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="LuaToolsGui.Views.DownloadView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -54,13 +54,13 @@
                                     Margin="8,1,0,0"
                                     Padding="5,1"
                                     VerticalAlignment="Top"
-                                    Background="#2a2440"
+                                    Background="{StaticResource BrandAccentSoftBrush}"
                                     CornerRadius="4"
                                     Visibility="{Binding IsDlc, Converter={StaticResource BoolToVis}}">
                                     <TextBlock
                                         FontSize="9.5"
                                         FontWeight="SemiBold"
-                                        Foreground="#c4b5fd"
+                                        Foreground="{StaticResource BrandAccentHoverBrush}"
                                         Text="DLC" />
                                 </Border>
                                 <Border
@@ -68,7 +68,7 @@
                                     Margin="8,1,0,0"
                                     Padding="5,1"
                                     VerticalAlignment="Top"
-                                    Background="#3a3320"
+                                    Background="#26FBBF24"
                                     CornerRadius="4"
                                     Visibility="{Binding IsShared, Converter={StaticResource BoolToVis}}">
                                     <TextBlock
@@ -141,12 +141,10 @@
 
     <Grid x:Name="Root">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="640" Margin="8,16,8,24">
+        <StackPanel MaxWidth="900" Margin="24,20,24,32">
 
-            <TextBlock
-                FontSize="22"
-                FontWeight="Bold"
-                Text="{x:Static res:Strings.Add_Title}" />
+            <TextBlock Style="{StaticResource BrandPageTitle}" Text="{x:Static res:Strings.Add_Title}" />
+            <Border Style="{StaticResource BrandTitleRule}" />
             <TextBlock
                 Margin="0,4,0,16"
                 FontSize="13"
@@ -303,7 +301,7 @@
                                 <TextBlock
                                     FontSize="10.5"
                                     FontWeight="SemiBold"
-                                    Foreground="#a78bfa"
+                                    Foreground="#ff7a89"
                                     Text="DLC" />
                             </Border>
                         </StackPanel>
@@ -550,7 +548,7 @@
                                         Grid.Column="4"
                                         VerticalAlignment="Center"
                                         FontSize="11.5"
-                                        Foreground="#a78bfa"
+                                        Foreground="#ff7a89"
                                         Text="{x:Static res:Strings.Add_NeedsHubcapKey}"
                                         ToolTip="{x:Static res:Strings.Add_NeedsHubcapKey_Tip}"
                                         Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}" />
@@ -613,7 +611,7 @@
                                 HorizontalAlignment="Center"
                                 FontSize="20"
                                 FontWeight="Bold"
-                                Foreground="#a78bfa"
+                                Foreground="#ff7a89"
                                 Text="{Binding DlcInfo.DepotCount}" />
                             <TextBlock
                                 FontSize="11"
@@ -770,7 +768,7 @@
             Margin="24"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Background="#1c1c22"
+            Background="{DynamicResource SolidBackgroundFillColorTertiaryBrush}"
             BorderBrush="#33FFFFFF"
             BorderThickness="1"
             CornerRadius="12">

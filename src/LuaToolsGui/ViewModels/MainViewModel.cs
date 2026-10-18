@@ -8,6 +8,7 @@ namespace LuaToolsGui.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
+    private readonly AuthService _auth;
     private readonly SteamService _steam;
 
     /// <summary>The first-run welcome overlay VM (hosted at the window root, shown via its IsOpen).</summary>
@@ -26,18 +27,68 @@ public partial class MainViewModel : ObservableObject
         return plus >= 0 ? ver[..plus] : ver;
     }
 
-    /// <summary>Bottom-of-pane line: the app version.</summary>
-    public string FooterStatus => VersionLabel;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRealUser))]
+    [NotifyPropertyChangedFor(nameof(FooterStatus))]
+    private bool _isGuest = true;
 
-    public MainViewModel(SteamService steam, OnboardingViewModel onboarding)
+    public bool IsRealUser => !IsGuest;
+
+    /// <summary>Bottom-of-pane line: version plus auth state. No username shown (privacy).</summary>
+    public string FooterStatus => $"{VersionLabel} · {(IsGuest ? Resources.Strings.Nav_Footer_Guest : Resources.Strings.Nav_Footer_LoggedIn)}";
+
+    [ObservableProperty] private bool _isSigningIn;
+    [ObservableProperty] private string? _signInError;
+
+    /// <summary>Signed-in account's display name (null as guest). Drives the pane footer chip.</summary>
+    public string? DisplayName => _auth.DisplayName;
+    /// <summary>Signed-in account's avatar URL (may be null; the chip falls back to an initial).</summary>
+    public string? AvatarUrl => _auth.AvatarUrl;
+    /// <summary>First letter of the display name, for the avatar fallback circle.</summary>
+    public string Initial =>
+        string.IsNullOrWhiteSpace(DisplayName) ? "?" : DisplayName!.Trim()[..1].ToUpperInvariant();
+
+    public MainViewModel(AuthService auth, SteamService steam, OnboardingViewModel onboarding)
     {
+        _auth = auth;
         _steam = steam;
         Onboarding = onboarding;
+        _auth.AuthStateChanged += SyncAuth;
     }
 
-    /// <summary>Kept for the window's Loaded handler; access state is read live from
-    /// <see cref="Services.DiscordGateService"/>, so there is nothing to restore here.</summary>
-    public Task InitializeAsync() => Task.CompletedTask;
+    private void SyncAuth()
+    {
+        IsGuest = _auth.IsGuest;
+        OnPropertyChanged(nameof(DisplayName));
+        OnPropertyChanged(nameof(AvatarUrl));
+        OnPropertyChanged(nameof(Initial));
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _auth.InitializeAsync();
+        SyncAuth();
+    }
+
+    [RelayCommand]
+    private async Task SignInAsync()
+    {
+        if (IsSigningIn) return;
+        IsSigningIn = true;
+        SignInError = null;
+        try
+        {
+            await _auth.SignInAsync();
+        }
+        catch (Exception ex)
+        {
+            SignInError = ex.Message;
+        }
+        finally
+        {
+            IsSigningIn = false;
+        }
+    }
 
     /// <summary>Confirm, then kill + relaunch Steam so newly added/removed luas take effect.</summary>
     [RelayCommand]

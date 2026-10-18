@@ -285,7 +285,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="24">
+    <Grid Margin="24,20,24,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -297,10 +297,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock
-                FontSize="22"
-                FontWeight="Bold"
-                Text="{x:Static res:Strings.Downloads_Title}" />
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock Style="{StaticResource BrandPageTitle}" Text="{x:Static res:Strings.Downloads_Title}" />
+                <Border Style="{StaticResource BrandTitleRule}" />
+            </StackPanel>
             <!--  Fetches SteamAutoCrack (and the .NET runtime it needs) and opens its window. Their GUI
                   takes no arguments, so nothing is passed to it — the user drives it from there.  -->
             <ui:Button

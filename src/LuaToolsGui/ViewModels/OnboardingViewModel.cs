@@ -7,13 +7,12 @@ namespace LuaToolsGui.ViewModels;
 
 /// <summary>
 /// First-run welcome overlay. Shown once (gated by <see cref="CacheService.OnboardingComplete"/>) over the
-/// whole app: offers Discord membership verification, "apply recommended settings"
-/// (BetterSteamTools + FastFetch) and "install the plugin", then applies the chosen actions on
-/// "Let's go!" and dismisses.
+/// whole app: offers Discord sign-in, "apply recommended settings" (BetterSteamTools + FastFetch) and
+/// "install the plugin", then applies the chosen actions on "Let's go!" and dismisses.
 /// </summary>
 public partial class OnboardingViewModel : ObservableObject
 {
-    private readonly DiscordGateService _gate;
+    private readonly AuthService _auth;
     private readonly CacheService _cache;
     private readonly SettingsService _settings;
     private readonly UnlockerService _unlocker;
@@ -21,18 +20,18 @@ public partial class OnboardingViewModel : ObservableObject
     private readonly PluginInstallerService _installer;
     private readonly ToastService _toast;
 
-    public OnboardingViewModel(DiscordGateService gate, CacheService cache, SettingsService settings,
+    public OnboardingViewModel(AuthService auth, CacheService cache, SettingsService settings,
         UnlockerService unlocker, SteamService steam, PluginInstallerService installer, ToastService toast)
     {
-        _gate = gate;
+        _auth = auth;
         _cache = cache;
         _settings = settings;
         _unlocker = unlocker;
         _steam = steam;
         _installer = installer;
         _toast = toast;
-        _gate.Changed += () => IsVerified = _gate.IsVerified;
-        IsVerified = _gate.IsVerified;
+        _auth.AuthStateChanged += () => IsSignedIn = _auth.IsSignedIn;
+        IsSignedIn = _auth.IsSignedIn;
     }
 
     /// <summary>Whether the overlay is visible. Set true by App on a fresh first launch.</summary>
@@ -42,13 +41,12 @@ public partial class OnboardingViewModel : ObservableObject
     /// and plugin status tiles reflect the fresh install).</summary>
     public Func<Task>? RefreshHome { get; set; }
 
-    /// <summary>True once the user's Discord membership has been verified.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotVerified))]
-    private bool _isVerified;
-    public bool IsNotVerified => !IsVerified;
+    [NotifyPropertyChangedFor(nameof(IsGuest))]
+    private bool _isSignedIn;
+    public bool IsGuest => !IsSignedIn;
 
-    [ObservableProperty] private bool _isVerifying;
+    [ObservableProperty] private bool _isSigningIn;
 
     // The two yes/no choices: both default to "yes".
     [ObservableProperty] private bool _applyRecommended = true;
@@ -69,17 +67,14 @@ public partial class OnboardingViewModel : ObservableObject
     private void SetInstallPlugin(bool value) => InstallPlugin = value;
 
     [RelayCommand]
-    private void JoinDiscord() => DiscordLauncher.OpenInvite();
-
-    [RelayCommand]
-    private async Task VerifyAccess()
+    private async Task SignIn()
     {
-        if (IsVerifying) return;
-        IsVerifying = true;
+        if (IsSigningIn) return;
+        IsSigningIn = true;
         StatusLine = null;
-        try { await _gate.VerifyAsync(); }
+        try { await _auth.SignInAsync(); }
         catch (Exception ex) { StatusLine = ex.Message; }
-        finally { IsVerifying = false; IsVerified = _gate.IsVerified; }
+        finally { IsSigningIn = false; }
     }
 
     /// <summary>"Let's go!". Mark onboarding done, close the overlay immediately, then apply the chosen

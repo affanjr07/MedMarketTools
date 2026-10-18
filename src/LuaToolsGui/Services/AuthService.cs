@@ -48,6 +48,19 @@ public class AuthService
     public async Task<bool> InitializeAsync()
     {
         StoredAuth? stored = LoadStored();
+
+        // Fork: no persisted session yet → fall back to the baked-in one, if configured, so a fresh
+        // install starts already signed in. ExpiresAt is forced to MinValue so the refresh below runs.
+        if (stored is null && !string.IsNullOrEmpty(AppConfig.BuiltInRefreshToken))
+        {
+            stored = new StoredAuth
+            {
+                RefreshToken = AppConfig.BuiltInRefreshToken,
+                AccessToken = AppConfig.BuiltInAccessToken,
+                ExpiresAt = DateTimeOffset.MinValue,
+            };
+        }
+
         if (stored is null || string.IsNullOrEmpty(stored.RefreshToken)) return false;
 
         _accessToken = stored.AccessToken;

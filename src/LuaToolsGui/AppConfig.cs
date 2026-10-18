@@ -25,20 +25,23 @@ public static class AppConfig
     // key that gates adding games (keys are handed out in-Discord).
     public const string DiscordInviteUrl = "https://discord.gg/ckgH4EutaT";
 
-    // ── Discord gate (join + role verification) ──────────────────────
-    // Adding games requires a verified Discord member: the user must join the server AND hold the
-    // required role. Verification is a one-time OAuth2 (PKCE) check against the Discord API
-    // (scopes: identify guilds guilds.members.read), then cached locally. The role is handed out by
-    // our own Discord bot.
-    public const string DiscordClientId = "1559213732838776993";
-    public const string DiscordGuildId = "1558798780441042985";
-    public const string DiscordRequiredRoleId = "1559215377442013254";
-    public const string DiscordInviteCode = "ckgH4EutaT";
-
-
     /// <summary>Must be registered in Supabase Auth → Redirect URLs.</summary>
     public const int OAuthCallbackPort = 53789;
     public const string OAuthCallbackUrl = "http://localhost:53789/callback";
+
+    // ── Baked-in session (fork) ─────────────────────────────────────
+    // Optional. When set, a fresh install (no auth.dat yet) starts already signed in as this
+    // lua.tools account, so users of a shared build don't have to run "Sign in with Discord".
+    // Populate from a real sign-in: sign in once in the app, then copy the refresh token out of
+    // %AppData%\LuaToolsGui\auth.dat (DPAPI, CurrentUser scope) into BuiltInRefreshToken. Leave
+    // empty to require an interactive sign-in.
+    //
+    // CAVEAT: Supabase ROTATES the refresh token on every refresh, so a token baked into a widely
+    // distributed build is invalidated as soon as one client refreshes it (reuse inside the
+    // project's refresh-token reuse interval still works). Treat this as a convenience for
+    // self/few-user builds, not a durable multi-user credential.
+    public const string BuiltInRefreshToken = "";
+    public const string BuiltInAccessToken = "";
 
     // The standard lua.tools daily download cap (Hubcap-keyed downloads are exempt). Hardcoded here
     // because the web app enforces it inline with no API field exposing it; change in one place if it moves.

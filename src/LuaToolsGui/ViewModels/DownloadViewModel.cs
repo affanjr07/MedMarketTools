@@ -80,7 +80,7 @@ public partial class DownloadViewModel : ObservableObject
     private readonly LuaToolsApiClient _api;
     private readonly HubcapService _hubcap;
     private readonly SettingsService _settings;
-    private readonly DiscordGateService _gate;
+    private readonly AuthService _auth;
     private readonly ToastService _toast;
     private readonly LuaInstaller _installer;
     private readonly SteamAppListCache _appList;
@@ -95,8 +95,8 @@ public partial class DownloadViewModel : ObservableObject
     // Per-confirm steamcmd lookup: depot/DLC id → its real depot info (name/size/os/lang).
     private IReadOnlyDictionary<long, ContentDepot> _depotsById = new Dictionary<long, ContentDepot>();
 
-    /// <summary>Set by App: sends users to Settings to verify Discord access + set their Hubcap key.</summary>
-    public Action? RequestAccessSetup { get; set; }
+    /// <summary>Set by App so a guest hitting "Download" can be sent through the Discord sign-in flow.</summary>
+    public Func<Task>? RequestSignIn { get; set; }
 
     /// <summary>Set by App: navigate to Manage and open this appid's detail (the install banner's "Reveal").</summary>
     public Action<long>? NavigateToGame { get; set; }
@@ -321,7 +321,7 @@ public partial class DownloadViewModel : ObservableObject
     public void SyncFastFetch() => FastFetch = _settings.FastFetch;
 
     public DownloadViewModel(LuaToolsApiClient api, HubcapService hubcap, SettingsService settings,
-        DiscordGateService gate, ToastService toast, LuaInstaller installer,
+        AuthService auth, ToastService toast, LuaInstaller installer,
         SteamAppListCache appList, SteamAppInfoCache appInfo, SteamDepotInfo depotInfo,
         HardwareAppIdService hardware, DropInstallViewModel drop,
         DownloadQueue queue, ManifestJobFactory jobs)
@@ -329,7 +329,7 @@ public partial class DownloadViewModel : ObservableObject
         _api = api;
         _hubcap = hubcap;
         _settings = settings;
-        _gate = gate;
+        _auth = auth;
         _toast = toast;
         _installer = installer;
         _appList = appList;
@@ -359,15 +359,14 @@ public partial class DownloadViewModel : ObservableObject
         _ = FetchDetailsDebouncedAsync(appId.ToString());
     }
 
-    /// <summary>Discord membership + role is the first gate for adding games. Routes to Settings when not
-    /// yet verified. Returns true when access is verified.</summary>
-    private Task<bool> EnsureAccessedAsync()
+    /// <summary>Guests can browse but must sign in for gated actions. Returns true if a sign-in was triggered.</summary>
+    private async Task<bool> PromptSignInIfGuestAsync(string message)
     {
-        if (_gate.IsVerified) return Task.FromResult(true);
-        Error = Resources.Strings.Add_AccessNeeded;
-        _toast.Show(Resources.Strings.Add_AccessNeeded, Resources.Strings.Add_AccessNeeded_Tip);
-        RequestAccessSetup?.Invoke();
-        return Task.FromResult(false);
+        if (!_auth.IsGuest) return false;
+        Error = message;
+        _toast.Show(Resources.Strings.Fixes_SignInRequired, message);
+        if (RequestSignIn is not null) await RequestSignIn();
+        return true;
     }
 
     // ── Search ──────────────────────────────────────────────────────
@@ -513,45 +512,55 @@ public partial class DownloadViewModel : ObservableObject
     private async Task FetchAsync()
     {
         if (Details is null) return;
-        // Add-ons aren't handled here; only base-game manifests are available in this build.
-        if (Details.IsDlc)
-        {
-            Error = Resources.Strings.Add_Err_Generic;
-            return;
-        }
-
-        // Access gate: Discord membership + a Hubcap key must be set up BEFORE we look for sources.
-        // Route the user to Settings' Access section instead of letting an empty source list surface
-        // a misleading "no available sources" error.
-        if (!await EnsureAccessedAsync()) return;
-        if (!HasHubcapAccess())
-        {
-            await PromptAccessSetupAsync();
-            return;
-        }
-
+        // DLC info is login-only; manifest source checking is public (guests allowed).
+        if (Details.IsDlc && await PromptSignInIfGuestAsync(Resources.Strings.Add_SignIn_Dlc)) return;
         ResetResults();
         IsChecking = true;
         try
         {
-            // Hubcap-only: a single key-gated source, checked straight against hubcapmanifest.com.
-            await AddHubcapSourceAsync(Details.AppId.ToString());
-            await ApplyHubcapStateAsync();
-
-            if (FastFetch)
+            if (Details.IsDlc)
             {
-                var best = Sources.FirstOrDefault(s => s.CanDownload);
-                if (best is null)
+                if (Details.BaseAppId is null)
                 {
-                    Error = Resources.Strings.Add_FastFetch_NoSource;
+                    Error = Resources.Strings.Add_Err_BaseGame;
                     return;
                 }
-                _fastFetchSource = best.DisplayName;
-                await DownloadFromSourceAsync(best);
+                DlcInfo = await _api.GetDlcInfoAsync(Details.AppId.ToString(), Details.BaseAppId);
+                DlcDepots.Clear();
+                // Included depots first, then missing: mirrors the website ordering
+                foreach (var d in DlcInfo?.Depots.OrderByDescending(d => d.Included) ?? Enumerable.Empty<DlcDepot>())
+                    DlcDepots.Add(d);
             }
             else
             {
-                SourcesLoaded = true;
+                var statuses = await _api.CheckSourcesAsync(Details.AppId.ToString());
+
+                // The manifest backend no longer reports the Hubcap/Morrenus source. Synthesize it
+                // ourselves from a direct Hubcap status check (or show it locked if no key is set).
+                await AddHubcapSourceAsync(statuses, Details.AppId.ToString());
+
+                // Premium (key-gated) sources first, like the website
+                foreach (var (name, status) in statuses.OrderByDescending(kv => SourceMeta.Get(kv.Key).RequiresUserKey ? 1 : 0))
+                    Sources.Add(new SourceRowViewModel(this, name, status));
+
+                await ApplyHubcapStateAsync();
+
+                if (FastFetch)
+                {
+                    var best = Sources.FirstOrDefault(s => s.CanDownload);
+                    if (best is null)
+                    {
+                        Error = Resources.Strings.Add_FastFetch_NoSource;
+                        return;
+                    }
+                    _fastFetchSource = best.DisplayName;
+                    await DownloadFromSourceAsync(best);
+                }
+                else
+                {
+                    SourcesLoaded = true;
+                    await RefreshStandardUsageAsync();
+                }
             }
         }
         catch (ApiException ex)
@@ -572,20 +581,23 @@ public partial class DownloadViewModel : ObservableObject
     private const string HubcapSourceName = "Sadie (Morrenus)";
 
     /// <summary>
-    /// Add the single Hubcap source row. With a key we check availability straight against
-    /// hubcapmanifest.com; without one we surface it as "unknown" so it shows locked with the
-    /// "needs a key" hint and no misleading availability badge.
+    /// Inject the Hubcap row into the source-status map. The manifest backend no longer returns it, so
+    /// availability comes from a direct Hubcap status check using the user's own key. With no key we still
+    /// surface the row (as "available") so it shows up locked with the "needs a key" hint.
     /// </summary>
-    private async Task AddHubcapSourceAsync(string appid)
+    private async Task AddHubcapSourceAsync(Dictionary<string, string> statuses, string appid)
     {
-        string status = "unknown";
         string? key = _settings.HubcapApiKey;
-        if (!string.IsNullOrEmpty(key))
+        if (string.IsNullOrEmpty(key))
         {
-            var st = await _hubcap.CheckStatusAsync(key, appid);
-            status = st?.ManifestFileExists == true ? "available" : "unavailable";
+            // No key → we genuinely can't check (the status endpoint needs the key). Mark it "unknown"
+            // so the row shows up locked with the "needs a key" hint and NO misleading availability badge.
+            statuses[HubcapSourceName] = "unknown";
+            return;
         }
-        Sources.Add(new SourceRowViewModel(this, HubcapSourceName, status));
+
+        var status = await _hubcap.CheckStatusAsync(key, appid);
+        statuses[HubcapSourceName] = status?.ManifestFileExists == true ? "available" : "unavailable";
     }
 
     private async Task ApplyHubcapStateAsync()
@@ -618,6 +630,7 @@ public partial class DownloadViewModel : ObservableObject
     {
         var standardRows = Sources.Where(s => !s.NeedsKey).ToList();
         if (standardRows.Count == 0) return;
+        if (_auth.IsGuest) return;
 
         var usageTask = _api.GetStandardUsageAsync();
         var supporterTask = _api.GetSupporterStatusAsync();
@@ -638,20 +651,6 @@ public partial class DownloadViewModel : ObservableObject
 
     // ── Downloads ───────────────────────────────────────────────────
 
-    /// <summary>True when a valid-format Hubcap key is configured. Keys can only be saved from Settings
-    /// after being verified against Hubcap, so presence + format is a safe, offline-friendly gate.</summary>
-    private bool HasHubcapAccess() =>
-        HubcapService.IsValidKeyFormat(_settings.HubcapApiKey);
-
-    /// <summary>No usable Hubcap key → explain why and route the user to Settings to set up access.</summary>
-    private Task PromptAccessSetupAsync()
-    {
-        Error = Resources.Strings.Add_NeedsHubcapKey;
-        _toast.Show(Resources.Strings.Add_NeedsHubcapKey, Resources.Strings.Add_NeedsHubcapKey_Tip);
-        RequestAccessSetup?.Invoke();
-        return Task.CompletedTask;
-    }
-
     /// <summary>
     /// Base-game manifest zip. Builds a job and hands it to the shared queue; the download, the
     /// overwrite confirmation and the install all happen there.
@@ -666,13 +665,10 @@ public partial class DownloadViewModel : ObservableObject
     {
         if (Details is null) return null;
 
-        // 1) Discord membership + role, then 2) a valid Hubcap key.
-        if (!await EnsureAccessedAsync()) return null;
-        if (!HasHubcapAccess())
-        {
-            await PromptAccessSetupAsync();
-            return null;
-        }
+        // Hubcap downloads use the user's OWN key and never touch lua.tools, so a guest with a key
+        // configured can download without signing in. Every other source still needs a lua.tools account.
+        bool hubcapWithKey = source.NeedsKey && !string.IsNullOrEmpty(_settings.HubcapApiKey);
+        if (!hubcapWithKey && await PromptSignInIfGuestAsync(Resources.Strings.Add_SignIn_Download)) return null;
 
         Error = null;
         LastDownload = null;
@@ -702,12 +698,7 @@ public partial class DownloadViewModel : ObservableObject
     private async Task GenerateDlcAsync()
     {
         if (Details?.BaseAppId is null) return;
-        if (!await EnsureAccessedAsync()) return;
-        if (!HasHubcapAccess())
-        {
-            await PromptAccessSetupAsync();
-            return;
-        }
+        if (await PromptSignInIfGuestAsync(Resources.Strings.Add_SignIn_Download)) return;
 
         Error = null;
         LastDownload = null;

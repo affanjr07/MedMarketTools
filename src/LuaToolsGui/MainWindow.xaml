@@ -10,10 +10,10 @@
     xmlns:views="clr-namespace:LuaToolsGui.Views"
     Title="MedMarketTools"
     Icon="icon.ico"
-    Width="1080"
-    Height="720"
-    MinWidth="760"
-    MinHeight="560"
+    Width="1120"
+    Height="740"
+    MinWidth="800"
+    MinHeight="580"
     d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="None"
@@ -22,130 +22,238 @@
     mc:Ignorable="d">
 
     <ui:FluentWindow.Background>
-        <RadialGradientBrush Center="0.12,0.0" GradientOrigin="0.12,0.0" RadiusX="0.9" RadiusY="1.0">
-            <GradientStop Offset="0.0" Color="#2E0A12" />
-            <GradientStop Offset="0.45" Color="#12080B" />
-            <GradientStop Offset="1.0" Color="#08080A" />
-        </RadialGradientBrush>
+        <SolidColorBrush Color="#070709" />
     </ui:FluentWindow.Background>
 
+    <ui:FluentWindow.Resources>
+        <!-- Sidebar item: keep WPF-UI's template, only tighten metrics + tint. -->
+        <Style
+            x:Key="BrandNavItem"
+            BasedOn="{StaticResource {x:Type ui:NavigationViewItem}}"
+            TargetType="{x:Type ui:NavigationViewItem}">
+            <Setter Property="Margin" Value="6,2" />
+            <Setter Property="FontSize" Value="13.5" />
+        </Style>
+    </ui:FluentWindow.Resources>
+
+    <!-- Layered ambient background: deep black + a red aura bleeding from the top-left corner. -->
     <Grid>
-        <Grid.Background>
-            <RadialGradientBrush Center="0.12,0.0" GradientOrigin="0.12,0.0" RadiusX="0.9" RadiusY="1.0">
-                <GradientStop Offset="0.0" Color="#2E0A12" />
-                <GradientStop Offset="0.45" Color="#12080B" />
-                <GradientStop Offset="1.0" Color="#08080A" />
-            </RadialGradientBrush>
-        </Grid.Background>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Rectangle Fill="#070709" />
+        <Rectangle Fill="{StaticResource BrandAuraBrush}" />
+        <Rectangle Fill="{StaticResource BrandAuraBottomBrush}" />
 
-        <ui:TitleBar Grid.Row="0" Title="MedMarketTools">
-            <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="pack://application:,,,/icon.ico" />
-            </ui:TitleBar.Icon>
-        </ui:TitleBar>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1">
-            <!-- App content (nav rail + toasts). Blurred while the first-run welcome overlay is open. -->
-            <Grid x:Name="AppContent">
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Onboarding.IsOpen}" Value="True">
-                                <Setter Property="Effect">
-                                    <Setter.Value>
-                                        <BlurEffect KernelType="Gaussian" Radius="28" RenderingBias="Performance" />
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Style>
-            <!-- Fluent nav rail. Selection/highlight + page hosting are handled by the control. -->
-            <ui:NavigationView
-                x:Name="RootNavigation"
-                Background="Transparent"
-                IsBackButtonVisible="Collapsed"
-                IsPaneToggleVisible="False"
-                OpenPaneLength="190"
-                PaneDisplayMode="Left">
-                <ui:NavigationView.MenuItems>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Home}" TargetPageType="{x:Type views:HomeView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="Home24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Add}" TargetPageType="{x:Type views:DownloadView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="Add24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Manage}" TargetPageType="{x:Type views:ManageView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="Games24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Mode}" TargetPageType="{x:Type views:ModeView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="Options24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="Plugin" TargetPageType="{x:Type views:PluginView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="PuzzlePiece24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                </ui:NavigationView.MenuItems>
+            <ui:TitleBar Grid.Row="0" Title="MedMarketTools">
+                <ui:TitleBar.Icon>
+                    <ui:ImageIcon Source="pack://application:,,,/icon.ico" />
+                </ui:TitleBar.Icon>
+            </ui:TitleBar>
 
-                <ui:NavigationView.FooterMenuItems>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_RestartSteam}" Click="RestartSteam_Click">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="ArrowClockwise24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Downloads}" TargetPageType="{x:Type views:DownloadsView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="ArrowDownload24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Settings}" TargetPageType="{x:Type views:SettingsView}">
-                        <ui:NavigationViewItem.Icon>
-                            <ui:SymbolIcon Symbol="Settings24" />
-                        </ui:NavigationViewItem.Icon>
-                    </ui:NavigationViewItem>
-                </ui:NavigationView.FooterMenuItems>
+            <!-- Hairline accent separating the title bar from the app body. -->
+            <Border
+                Grid.Row="0"
+                Height="1"
+                Margin="0,1,0,0"
+                VerticalAlignment="Bottom"
+                Background="{StaticResource BrandAccentGradientH}"
+                Opacity="0.6" />
 
-                <!-- Always-visible version tag at the very bottom of the pane -->
-                <ui:NavigationView.PaneFooter>
-                  <StackPanel>
-                    <!-- Bottom line: "Signed in as …" when logged in, else the version tag. -->
-                    <TextBlock
-                        Margin="12,0,10,8"
-                        FontSize="11"
-                        Foreground="#6b7280"
-                        Text="{Binding FooterStatus}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip="{Binding FooterStatus}" />
-                  </StackPanel>
-                </ui:NavigationView.PaneFooter>
-            </ui:NavigationView>
+            <Grid Grid.Row="1">
+                <!-- App content (nav rail + toasts). Blurred while the first-run welcome overlay is open. -->
+                <Grid x:Name="AppContent">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Onboarding.IsOpen}" Value="True">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <BlurEffect KernelType="Gaussian" Radius="28" RenderingBias="Performance" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
 
-            <!-- Bottom-right toasts (attached to ToastService in App.OnStartup). Also hosts the
-                 persistent "update ready" prompt with a Restart action. -->
-            <ui:SnackbarPresenter
-                x:Name="RootSnackbar"
-                Margin="0,0,24,18"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom" />
+                    <ui:NavigationView
+                        x:Name="RootNavigation"
+                        Background="Transparent"
+                        IsBackButtonVisible="Collapsed"
+                        IsPaneToggleVisible="False"
+                        OpenPaneLength="212"
+                        PaneDisplayMode="Left">
+
+                        <ui:NavigationView.MenuItems>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Home}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:HomeView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="Home24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Add}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:DownloadView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="Add24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Manage}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:ManageView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="Games24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Builds}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:BuildsView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="BranchFork24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Mode}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:ModeView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="Options24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Fixes}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:FixesView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="ShieldTask24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="Plugin" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:PluginView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="PuzzlePiece24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                        </ui:NavigationView.MenuItems>
+
+                        <ui:NavigationView.FooterMenuItems>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_RestartSteam}" Click="RestartSteam_Click" Style="{StaticResource BrandNavItem}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="ArrowClockwise24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Downloads}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:DownloadsView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="ArrowDownload24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                            <ui:NavigationViewItem Content="{x:Static res:Strings.Nav_Settings}" Style="{StaticResource BrandNavItem}" TargetPageType="{x:Type views:SettingsView}">
+                                <ui:NavigationViewItem.Icon>
+                                    <ui:SymbolIcon Symbol="Settings24" />
+                                </ui:NavigationViewItem.Icon>
+                            </ui:NavigationViewItem>
+                        </ui:NavigationView.FooterMenuItems>
+
+                        <ui:NavigationView.PaneFooter>
+                            <StackPanel>
+                                <!-- Guest: sign-in CTA -->
+                                <StackPanel
+                                    Margin="10,4,10,8"
+                                    Visibility="{Binding IsGuest, Converter={StaticResource BoolToVis}}">
+                                    <ui:Button
+                                        HorizontalAlignment="Stretch"
+                                        Appearance="Primary"
+                                        Command="{Binding SignInCommand}"
+                                        Content="{x:Static res:Strings.Nav_SignInDiscord}"
+                                        Icon="{ui:SymbolIcon Person24}"
+                                        Visibility="{Binding IsSigningIn, Converter={StaticResource InverseBoolToVis}}" />
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding IsSigningIn, Converter={StaticResource BoolToVis}}">
+                                        <ui:ProgressRing
+                                            Width="16"
+                                            Height="16"
+                                            IsIndeterminate="True" />
+                                        <TextBlock
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="11.5"
+                                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                            Text="{x:Static res:Strings.Nav_WaitingForBrowser}" />
+                                    </StackPanel>
+                                    <TextBlock
+                                        Margin="2,8,0,0"
+                                        FontSize="11.5"
+                                        Foreground="{StaticResource BrandDangerBrush}"
+                                        Text="{Binding SignInError}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding SignInError, Converter={StaticResource NullToCollapsed}}" />
+                                </StackPanel>
+
+                                <!-- Signed in: account chip -->
+                                <Border
+                                    Margin="10,4,10,6"
+                                    Padding="9"
+                                    Background="{StaticResource BrandCardBgBrush}"
+                                    BorderBrush="{StaticResource BrandCardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="11"
+                                    Visibility="{Binding IsRealUser, Converter={StaticResource BoolToVis}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border
+                                            Width="32"
+                                            Height="32"
+                                            CornerRadius="16"
+                                            Background="{StaticResource BrandAccentSoftBrush}"
+                                            BorderBrush="#40FF2D46"
+                                            BorderThickness="1">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontWeight="Bold"
+                                                Foreground="{StaticResource BrandAccentBrush}"
+                                                Text="{Binding Initial}" />
+                                        </Border>
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Margin="9,0,0,0"
+                                            VerticalAlignment="Center">
+                                            <TextBlock
+                                                FontSize="12.5"
+                                                FontWeight="SemiBold"
+                                                Text="{Binding DisplayName}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                FontSize="10.5"
+                                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                Text="{x:Static res:Strings.Nav_Footer_LoggedIn}"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Bottom line: version tag -->
+                                <TextBlock
+                                    Margin="12,0,10,8"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                    Text="{Binding FooterStatus}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding FooterStatus}" />
+                            </StackPanel>
+                        </ui:NavigationView.PaneFooter>
+                    </ui:NavigationView>
+
+                    <!-- Bottom-right toasts (attached to ToastService in App.OnStartup). Also hosts the
+                         persistent "update ready" prompt with a Restart action. -->
+                    <ui:SnackbarPresenter
+                        x:Name="RootSnackbar"
+                        Margin="0,0,24,18"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom" />
+                </Grid>
+
+                <!-- First-run welcome overlay (last child = top Z-order; covers the nav + page area). -->
+                <views:OnboardingView
+                    DataContext="{Binding Onboarding}"
+                    Visibility="{Binding IsOpen, Converter={StaticResource BoolToVis}}" />
             </Grid>
-
-            <!-- First-run welcome overlay (last child = top Z-order; covers the nav + page area). -->
-            <views:OnboardingView
-                DataContext="{Binding Onboarding}"
-                Visibility="{Binding IsOpen, Converter={StaticResource BoolToVis}}" />
         </Grid>
     </Grid>
 </ui:FluentWindow>

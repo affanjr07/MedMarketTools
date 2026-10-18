@@ -17,7 +17,6 @@ public class PluginAddService(
     HubcapService hubcap,
     SettingsService settings,
     AuthService auth,
-    DiscordGateService gate,
     DownloadQueue queue,
     ManifestJobFactory jobs)
 {
@@ -103,21 +102,6 @@ public class PluginAddService(
     {
         try
         {
-            // Access gate: Discord membership verification then a Hubcap key. Without these the source
-            // list is empty, so tell the user to set them up instead of "No available source for this game".
-            if (!gate.IsVerified)
-            {
-                state.Error = Resources.Strings.Add_AccessNeeded_Tip;
-                state.Checking = false;
-                return;
-            }
-            if (!HubcapService.IsValidKeyFormat(settings.HubcapApiKey))
-            {
-                state.Error = Resources.Strings.Add_NeedsHubcapKey_Tip;
-                state.Checking = false;
-                return;
-            }
-
             // The game name is only needed later for the "Added {name}" status. If the store page already
             // supplied it (via Start), skip the lua.tools /details call entirely; otherwise fetch it in
             // parallel so it never gates the picker behind its own serial round-trip.
